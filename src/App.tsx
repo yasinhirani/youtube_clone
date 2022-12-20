@@ -1,25 +1,60 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useMemo, useState } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import "./App.css";
+import {
+  Navbar,
+  Sidebar,
+  HomePage,
+  VideoDetail,
+  ChannelDetail,
+  History,
+  SearchResult,
+} from "./components/index";
+import {ActiveLinkContext, SearchStringContext} from "./context/Context";
 
 function App() {
+  const location = useLocation();
+
+  const [activeLink, setActiveLink] = useState<string | null>("");
+  const [searchString, setSearchString] = useState<string | null>("");
+
+  const ActiveLinkState = useMemo(
+    () => ({
+      activeLink,
+      setActiveLink,
+    }),
+    [activeLink]
+  );
+  const SearchStringState = useMemo(
+    () => ({
+      searchString,
+      setSearchString,
+    }),
+    [searchString]
+  );
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ActiveLinkContext.Provider value={ActiveLinkState}>
+      <SearchStringContext.Provider value={SearchStringState}>
+        <div className="w-full h-full flex flex-col overflow-hidden">
+          <Navbar />
+          <div
+            className={`w-full flex ${
+              location.pathname.includes("videoDetail") && "flex-col"
+            } flex-grow overflow-hidden mt-20`}
+          >
+            {!location.pathname.includes("videoDetail") && <Sidebar />}
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/search" element={<SearchResult />} />
+              <Route path="/videoDetail/:id" element={<VideoDetail />} />
+              <Route path="/channelDetail/:id" element={<ChannelDetail />} />
+              <Route path="/history" element={<History />} />
+            </Routes>
+          </div>
+        </div>
+      </SearchStringContext.Provider>
+    </ActiveLinkContext.Provider>
   );
 }
 
