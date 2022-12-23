@@ -21,3 +21,10 @@
   background: #a9a9a9;
   border-radius: 8px;
 }
+
+progress[value]::-webkit-progress-bar {
+  @apply bg-[#0f0f0f];
+}
+progress[value]::-webkit-progress-value {
+  @apply bg-red-600;
+}

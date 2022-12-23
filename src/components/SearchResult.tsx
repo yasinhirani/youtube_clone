@@ -5,10 +5,10 @@ import { SearchStringContext } from "../context/Context";
 import "react-loading-skeleton/dist/skeleton.css";
 import formatViews from "../shared/ViewesFormatter";
 import { ISearchResult } from "../shared/model/videos.model";
+import axios from "axios";
 
 const SearchResult = () => {
   const { searchString } = useContext(SearchStringContext);
-  // console.log(searchResult);
 
   const [skeletonLoadingLength, setSkeletonLoadingLength] = useState<
     Array<number>
@@ -17,6 +17,8 @@ const SearchResult = () => {
 
   // get search result
   const getSearchResult = async (searchValue: string | null) => {
+    setSkeletonLoadingLength(new Array(10).fill(0));
+    setSearchResult([]);
     const options = {
       method: "GET",
       headers: {
@@ -24,19 +26,20 @@ const SearchResult = () => {
         "X-RapidAPI-Host": "youtube-v3-alternative.p.rapidapi.com",
       },
     };
-    const res = await fetch(
-      `https://youtube-v3-alternative.p.rapidapi.com/search?query=${searchValue}&geo=IN&lang=en`,
-      options
-    );
-    const data = await res.json();
-    setSearchResult(data.data);
-    data.data.length > 0 && setSkeletonLoadingLength([]);
+    await axios
+      .get(
+        `https://youtube-v3-alternative.p.rapidapi.com/search?query=${searchValue}&geo=IN&lang=en`,
+        options
+      )
+      .then((res) => {
+        setSearchResult(res.data.data);
+        res.data.data.length > 0 && setSkeletonLoadingLength([]);
+      });
   };
 
   useEffect(() => {
     getSearchResult(searchString);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchString]);
 
   return (
     <div className="bg-[#0f0f0f] flex-grow overflow-y-auto px-5 sm:px-10 py-6">

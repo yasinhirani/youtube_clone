@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect, useState, useContext } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { Link } from "react-router-dom";
@@ -15,35 +16,28 @@ const History = () => {
 
   const getHistoryData = async () => {
     setHistoryDataLoading(true);
-    const res = await fetch("http://localhost:8080/getHistoryData");
-    const data = await res.json();
-    setHistoryData(data);
-    setHistoryDataLoading(false);
+    axios.get("http://localhost:8080/getHistoryData").then((res) => {
+      setHistoryData(res.data);
+      setHistoryDataLoading(false);
+    });
   };
 
   const handleDelete = async (id: string) => {
-    const res = await fetch("http://localhost:8080/deleteHistory", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ videoId: id }),
-    });
-    const data = await res.json();
-    if (data.deleted) {
-      getHistoryData();
-    } else {
-      console.log("some error occurred");
-    }
+    await axios
+      .post("http://localhost:8080/deleteHistory", { videoId: id })
+      .then((res) => {
+        if (res.data.deleted) {
+          getHistoryData();
+        } else {
+          console.log("some error occurred");
+        }
+      });
   };
 
   const updateTimeStamp = async (videoId: string) => {
-    await fetch("http://localhost:8080/updateTime", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ videoId: videoId, time: new Date().getTime() }),
+    await axios.post("http://localhost:8080/updateTime", {
+      videoId: videoId,
+      time: new Date().getTime(),
     });
   };
 

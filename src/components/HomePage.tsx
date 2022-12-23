@@ -4,37 +4,58 @@ import { Link } from "react-router-dom";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import formatViews from "../shared/ViewesFormatter";
-import { ActiveLinkContext } from "../context/Context";
-import { IVideos } from "../shared/model/videos.model";
+import { ActiveLinkContext, TrendingVideosContext } from "../context/Context";
+// import { IVideos } from "../shared/model/videos.model";
+import axios from "axios";
 
 const HomePage = () => {
   const { setActiveLink } = useContext(ActiveLinkContext);
+  const { trendingVideos, setTrendingVideos } = useContext(TrendingVideosContext);
 
   const [skeletonLoadingLength, setSkeletonLoadingLength] = useState<
     Array<number>
   >(new Array(50).fill(0));
-  const [trendingVideos, setTrendingVideos] = useState<IVideos[]>([]);
+  // const [trendingVideos, setTrendingVideos] = useState<IVideos[]>([]);
+  const [progressBarPercent, setProgressBarPercent] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // get trending videos
   const getTrendingVideos = async () => {
-    const options = {
-      method: "GET",
-      headers: {
-        "X-RapidAPI-Key": "b270c8a6c1mshfa428feb3857501p110f3cjsn471755706752",
-        "X-RapidAPI-Host": "youtube-v2.p.rapidapi.com",
-      },
-    };
-    const res = await fetch(
-      "https://youtube-v2.p.rapidapi.com/trending/?lang=en&country=in&section=Now",
-      options
-    );
-    const data = await res.json();
-    setTrendingVideos(data.videos);
-    data.videos.length > 0 && setSkeletonLoadingLength([]);
+    await axios
+      .get(
+        "https://youtube-v2.p.rapidapi.com/trending/?lang=en&country=in&section=Now",
+        {
+          method: "GET",
+          headers: {
+            "X-RapidAPI-Key":
+              "b270c8a6c1mshfa428feb3857501p110f3cjsn471755706752",
+            "X-RapidAPI-Host": "youtube-v2.p.rapidapi.com",
+          },
+          onDownloadProgress: (progressEvent) => {
+            setIsLoading(true);
+            let percentage = 0;
+            if (progressEvent.total !== undefined) {
+              percentage = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+              );
+              setProgressBarPercent(percentage);
+              if (percentage === 100) {
+                setTimeout(() => {
+                  setIsLoading(false);
+                }, 400);
+              }
+            }
+          },
+        }
+      )
+      .then((res) => {
+        setTrendingVideos(res.data.videos);
+        res.data.videos.length > 0 && setSkeletonLoadingLength([]);
+      });
   };
 
   useEffect(() => {
-    getTrendingVideos();
+    trendingVideos.length <=0 && getTrendingVideos();
     setActiveLink("Home");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -42,6 +63,13 @@ const HomePage = () => {
   return (
     <section className="flex-grow p-5 bg-[#0f0f0f] overflow-y-auto">
       {/* <h2 className="text-white font-semibold text-3xl mb-5">Trending</h2> */}
+      {isLoading && (
+        <progress
+          className="absolute top-0 h-1 bg-red-600 left-0 w-full z-20"
+          value={`${progressBarPercent}`}
+          max={100}
+        />
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 w-full max-w-[90rem] mx-auto">
         {trendingVideos &&
         trendingVideos !== undefined &&
@@ -51,9 +79,7 @@ const HomePage = () => {
             .map((videos) => {
               return (
                 <div key={Math.random()} className="flex flex-col">
-                  <Link
-                    to={`/videoDetail/${videos.video_id}`}
-                  >
+                  <Link to={`/videoDetail/${videos.video_id}`}>
                     <figure className="w-full relative">
                       <img
                         src={videos.thumbnails[2].url}

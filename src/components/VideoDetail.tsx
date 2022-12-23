@@ -11,6 +11,7 @@ import {
   IRecommendations,
   IVideoDetails,
 } from "../shared/model/videos.model";
+import axios from "axios";
 
 const VideoDetail = () => {
   const { id } = useParams();
@@ -42,17 +43,18 @@ const VideoDetail = () => {
         "X-RapidAPI-Host": "youtube-v31.p.rapidapi.com",
       },
     };
-    const res = await fetch(
-      `https://youtube-v31.p.rapidapi.com/search?relatedToVideoId=${id}&part=id%2Csnippet&type=video&maxResults=50`,
-      options
-    );
-    const data = await res.json();
-    setRecommendations(data.items);
-    // console.log(data.items);
-    if (divRef.current) {
+    await axios
+      .get(
+        `https://youtube-v31.p.rapidapi.com/search?relatedToVideoId=${id}&part=id%2Csnippet&type=video&maxResults=50`,
+        options
+      )
+      .then((res) => {
+        setRecommendations(res.data.items);
+        setSkeletonLoadingLength([]);
+      });
+    if (divRef.current && window.innerWidth > 1024) {
       divRef.current.scrollIntoView();
     }
-    setSkeletonLoadingLength([]);
   };
 
   const getVideoDetails = async () => {
@@ -63,15 +65,15 @@ const VideoDetail = () => {
         "X-RapidAPI-Host": "youtube-v3-alternative.p.rapidapi.com",
       },
     };
-
-    const res = await fetch(
-      `https://youtube-v3-alternative.p.rapidapi.com/video?id=${id}`,
-      options
-    );
-    const data = await res.json();
-    setVideoDetail(data);
-    getChannelDetails(data.channelId);
-    // console.log(data);
+    await axios
+      .get(
+        `https://youtube-v3-alternative.p.rapidapi.com/video?id=${id}`,
+        options
+      )
+      .then((res) => {
+        setVideoDetail(res.data);
+        getChannelDetails(res.data.channelId);
+      });
   };
 
   const getChannelDetails = async (channelId: string) => {
@@ -82,46 +84,38 @@ const VideoDetail = () => {
         "X-RapidAPI-Host": "youtube-v31.p.rapidapi.com",
       },
     };
-    const res = await fetch(
-      `https://youtube-v31.p.rapidapi.com/channels?part=snippet%2Cstatistics&id=${channelId}`,
-      options
-    );
-    const data = await res.json();
-    setChannelDetail(data?.items[0]);
+    await axios
+      .get(
+        `https://youtube-v31.p.rapidapi.com/channels?part=snippet%2Cstatistics&id=${channelId}`,
+        options
+      )
+      .then((res) => {
+        setChannelDetail(res.data?.items[0]);
+      });
   };
 
   const handleHistoryUpload = async () => {
-    const res = await fetch("http://localhost:8080/historyAvailable", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        videoId: videoDetail?.id,
-      }),
-    });
-    const data = await res.json();
-    console.log(data);
-    if (data.isAvailable) {
+    let historyAvailable = false;
+    await axios
+      .get(`http://localhost:8080/historyAvailable?videoId=${videoDetail?.id}`)
+      .then((res) => {
+        console.log(res.data);
+        historyAvailable = res.data.isAvailable;
+      });
+    if (historyAvailable) {
       return;
     }
     if (videoDetail) {
       setTimeout(() => {
-        fetch("http://localhost:8080/history", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
+        axios
+          .post("http://localhost:8080/history", {
             channelName: videoDetail.channelTitle,
             title: videoDetail.title,
             videoId: videoDetail.id,
             description: videoDetail.description,
             thumbnail: videoDetail.thumbnail[3].url,
             time: new Date().getTime(),
-          }),
-        })
-          .then(() => console.log("uploaded"))
+          })
           .catch(() => console.log("something went wrong"));
       }, 2000);
     }
@@ -134,16 +128,19 @@ const VideoDetail = () => {
   }, [id]);
 
   return (
-    <section className="flex flex-grow bg-[#0f0f0f] p-5 space-x-5 overflow-y-auto">
+    <section className="flex flex-col lg:flex-row flex-grow bg-[#0f0f0f] p-5 lg:space-x-5 overflow-y-auto space-y-5 lg:space-y-0">
       <div className="flex-grow">
-        <ReactPlayer
-          url={`https://www.youtube.com/watch?v=${id}`}
-          width="100%"
-          height="100%"
-          controls
-          playing
-          onStart={handleHistoryUpload}
-        />
+        <div className="w-full h-[400px] lg:h-full">
+          <ReactPlayer
+            url={`https://www.youtube.com/watch?v=${id}`}
+            width="100%"
+            height="100%"
+            controls
+            playing
+            onStart={handleHistoryUpload}
+            pip={true}
+          />
+        </div>
         <div className="mt-5">
           {videoDetail && (
             <h2 className="text-white font-semibold text-xl">
@@ -210,7 +207,7 @@ const VideoDetail = () => {
                   className="font-semibold text-white text-sm"
                   onClick={() => {
                     setReadFullDescription(false);
-                    if (divRef.current) {
+                    if (divRef.current && window.innerWidth > 1024) {
                       divRef.current.scrollIntoView({ behavior: "smooth" });
                     }
                   }}
@@ -222,7 +219,7 @@ const VideoDetail = () => {
           )}
         </div>
       </div>
-      <aside className="w-96 min-w-[25rem]">
+      <aside className="w-full lg:w-96 lg:min-w-[25rem]">
         <div ref={divRef} className="grid grid-cols-1 gap-5">
           {recommendations && recommendations.length > 0
             ? recommendations.map((recommendation) => {
@@ -248,7 +245,9 @@ const VideoDetail = () => {
                       <h4 className="text-white font-semibold line-clamp-2 break-all">
                         {recommendation.snippet.title}
                       </h4>
-                      <Link to={`/channelDetail/${recommendation.snippet.channelId}`}>
+                      <Link
+                        to={`/channelDetail/${recommendation.snippet.channelId}`}
+                      >
                         <p className="text-gray-400 font-medium text-sm">
                           {recommendation.snippet.channelTitle}
                         </p>

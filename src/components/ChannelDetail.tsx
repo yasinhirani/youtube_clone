@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { Link, useParams } from "react-router-dom";
@@ -20,20 +21,19 @@ const ChannelDetail = () => {
         "X-RapidAPI-Host": "youtube-v3-alternative.p.rapidapi.com",
       },
     };
-
-    const res = await fetch(
-      `https://youtube-v3-alternative.p.rapidapi.com/channel?id=${id}`,
-      options
-    );
-    const data = await res.json();
-    console.log(data);
-    setChannelDetails(data);
-    setSkeletonLoadingLength([]);
+    axios
+      .get(
+        `https://youtube-v3-alternative.p.rapidapi.com/channel?id=${id}`,
+        options
+      )
+      .then((res) => {
+        setChannelDetails(res.data);
+        setSkeletonLoadingLength([]);
+      });
   };
 
   useEffect(() => {
     getChannelDetails();
-    console.log("run");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -70,7 +70,12 @@ const ChannelDetail = () => {
           </>
         ) : (
           <SkeletonTheme baseColor="#303030" highlightColor="#404040">
-            <Skeleton width={128} height={128} borderRadius="50%" className="z-20" />
+            <Skeleton
+              width={128}
+              height={128}
+              borderRadius="50%"
+              className="z-20"
+            />
             <Skeleton width={120} />
             <Skeleton width={60} />
           </SkeletonTheme>

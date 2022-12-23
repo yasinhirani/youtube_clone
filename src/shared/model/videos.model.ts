@@ -8,6 +8,11 @@ export interface ISearchStringContext {
   setSearchString: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
+export interface ITrendingVideosContext {
+  trendingVideos: IVideos[];
+  setTrendingVideos: React.Dispatch<React.SetStateAction<IVideos[]>>;
+}
+
 export interface Thumbnail {
   url: string;
   width: number;
@@ -155,7 +160,7 @@ export interface IVideoDetails {
 }
 
 // For history list
-export interface IHistories{
+export interface IHistories {
   videoId: string;
   thumbnail: string;
   channelName: string;
