@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
+import BottomNavigation from "./components/BottomNavigation";
 import {
   Navbar,
   Sidebar,
@@ -54,18 +55,21 @@ function App() {
             <Navbar />
             <div
               className={`w-full flex ${
-                location.pathname.includes("videoDetail") && "flex-col"
-              } flex-grow overflow-hidden mt-20`}
+                location.pathname.includes("watch") && "flex-col"
+              } flex-grow overflow-hidden mt-20 ${
+                !location.pathname.includes("watch") && "mb-16 sm:mb-0"
+              }`}
             >
-              {!location.pathname.includes("videoDetail") && <Sidebar />}
+              {!location.pathname.includes("watch") && <Sidebar />}
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/search" element={<SearchResult />} />
-                <Route path="/videoDetail/:id" element={<VideoDetail />} />
-                <Route path="/channelDetail/:id" element={<ChannelDetail />} />
+                <Route path="/watch" element={<VideoDetail />} />
+                <Route path="/channel" element={<ChannelDetail />} />
                 <Route path="/history" element={<History />} />
               </Routes>
             </div>
+            {!location.pathname.includes("watch") && <BottomNavigation />}
           </div>
         </TrendingVideosContext.Provider>
       </SearchStringContext.Provider>

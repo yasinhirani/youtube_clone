@@ -79,7 +79,7 @@ const HomePage = () => {
             .map((videos) => {
               return (
                 <div key={Math.random()} className="flex flex-col">
-                  <Link to={`/videoDetail/${videos.video_id}`}>
+                  <Link to={`/watch?v=${videos.video_id}`}>
                     <figure className="w-full relative">
                       <img
                         src={videos.thumbnails[2].url}
@@ -96,7 +96,7 @@ const HomePage = () => {
                       {videos.title}
                     </h4>
                   </Link>
-                  <Link to={`/channelDetail/${videos.channel_id}`}>
+                  <Link to={`/channel?id=${videos.channel_id}`}>
                     <p className="text-gray-400 font-medium text-sm">
                       {videos.author}
                     </p>

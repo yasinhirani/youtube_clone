@@ -5,6 +5,10 @@
     aspect-ratio: 84/47;
 }
 
+.break-word{
+  word-break: break-word;
+}
+
 /* Custom scrollbar */
 /* width */
 ::-webkit-scrollbar {

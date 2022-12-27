@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import ReactPlayer from "react-player";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -14,8 +14,8 @@ import {
 import axios from "axios";
 
 const VideoDetail = () => {
-  const { id } = useParams();
-  // console.log(id);
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get("v");
 
   const [recommendations, setRecommendations] = useState<IRecommendations[]>(
     []
@@ -99,7 +99,7 @@ const VideoDetail = () => {
     await axios
       .get(`http://localhost:8080/historyAvailable?videoId=${videoDetail?.id}`)
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         historyAvailable = res.data.isAvailable;
       });
     if (historyAvailable) {
@@ -149,7 +149,7 @@ const VideoDetail = () => {
           )}
           {channelDetail && (
             <Link
-              to={`/channelDetail/${channelDetail.id}`}
+              to={`/channel?id=${channelDetail.id}`}
               className="flex items-center space-x-4 mt-4"
             >
               <figure className="w-10 h-10 rounded-full overflow-hidden">
@@ -224,29 +224,32 @@ const VideoDetail = () => {
           {recommendations && recommendations.length > 0
             ? recommendations.map((recommendation) => {
                 return (
-                  <Link
-                    to={`/videoDetail/${recommendation.id.videoId}`}
+                  <div
                     key={Math.random()}
                     className="flex items-start space-x-4"
                   >
-                    <figure className="w-44 min-w-[11rem] relative">
-                      <img
-                        className="min-w-full h-full rounded-xl"
-                        src={recommendation.snippet.thumbnails.medium.url}
-                        alt=""
-                      />
-                      {/* {recommendation.video_length !== "" && (
+                    <Link to={`/watch?v=${recommendation.id.videoId}`}>
+                      <figure className="w-44 min-w-[11rem] relative">
+                        <img
+                          className="min-w-full h-full rounded-xl"
+                          src={recommendation.snippet.thumbnails.medium.url}
+                          alt=""
+                        />
+                        {/* {recommendation.video_length !== "" && (
                         <figcaption className="bg-black bg-opacity-95 rounded-lg px-2 py-1 absolute right-2 bottom-2 text-xs text-white font-semibold">
                           {recommendation.video_length}
                         </figcaption>
                       )} */}
-                    </figure>
+                      </figure>
+                    </Link>
                     <div>
-                      <h4 className="text-white font-semibold line-clamp-2 break-all">
-                        {recommendation.snippet.title}
-                      </h4>
+                      <Link to={`/watch?v=${recommendation.id.videoId}`}>
+                        <h4 className="text-white font-semibold line-clamp-2 break-all">
+                          {recommendation.snippet.title}
+                        </h4>
+                      </Link>
                       <Link
-                        to={`/channelDetail/${recommendation.snippet.channelId}`}
+                        to={`/channel?id=${recommendation.snippet.channelId}`}
                       >
                         <p className="text-gray-400 font-medium text-sm">
                           {recommendation.snippet.channelTitle}
@@ -261,7 +264,7 @@ const VideoDetail = () => {
                         })}
                       </p>
                     </div>
-                  </Link>
+                  </div>
                 );
               })
             : skeletonLoadingLength.map(() => {

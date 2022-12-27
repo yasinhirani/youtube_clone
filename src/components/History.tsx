@@ -60,7 +60,7 @@ const History = () => {
             return (
               <div className="relative" key={Math.random()}>
                 <Link
-                  to={`/videoDetail/${data.videoId}`}
+                  to={`/watch?v=${data.videoId}`}
                   className="flex flex-col sm:flex-row sm:items-start sm:space-x-5 space-y-4 sm:space-y-0"
                   onClick={() => updateTimeStamp(data.videoId)}
                 >

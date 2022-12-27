@@ -50,7 +50,7 @@ const SearchResult = () => {
             if (result.type === "channel") {
               return (
                 <Link
-                  to={`/channelDetail/${result.channelId}`}
+                  to={`/channel?id=${result.channelId}`}
                   className="flex items-center space-x-8"
                   key={Math.random()}
                 >
@@ -71,7 +71,7 @@ const SearchResult = () => {
             if (result.type === "video") {
               return (
                 <Link
-                  to={`/videoDetail/${result.videoId}`}
+                  to={`/watch?v=${result.videoId}`}
                   className="flex flex-col sm:flex-row sm:items-start sm:space-x-5 space-y-4 sm:space-y-0"
                   key={Math.random()}
                 >
@@ -83,7 +83,7 @@ const SearchResult = () => {
                     />
                   </figure>
                   <div>
-                    <h4 className="text-white text-xl line-clamp-2 mb-1">
+                    <h4 className="text-white text-xl line-clamp-2 mb-1 break-word">
                       {result.title}
                     </h4>
                     <p className="text-white text-xs mb-4">
@@ -91,7 +91,7 @@ const SearchResult = () => {
                       {result.publishedText}
                     </p>
                     <Link
-                      to={`/channelDetail/${result.channelId}`}
+                      to={`/channel?id=${result.channelId}`}
                       className="flex items-center space-x-2"
                     >
                       <figure className="w-6 h-6 rounded-full overflow-hidden">
@@ -111,13 +111,19 @@ const SearchResult = () => {
             baseColor="#282828"
             highlightColor="#404040"
             borderRadius="12px"
+            enableAnimation={false}
           >
             {skeletonLoadingLength.map(() => (
               <div
                 className="flex flex-col sm:flex-row sm:items-start sm:space-x-5 space-y-4 sm:space-y-0"
                 key={Math.random()}
               >
-                <Skeleton width={260} height={200} />
+                <div className="block sm:hidden">
+                  <Skeleton height={200} />
+                </div>
+                <div className="hidden sm:block">
+                  <Skeleton width={260} height={200} />
+                </div>
                 <div className="w-full">
                   <Skeleton width="100%" count={2} />
                   <Skeleton width={250} className="mt-4" />

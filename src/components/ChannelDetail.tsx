@@ -1,12 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import { Link, useParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { IChannel } from "../shared/model/videos.model";
 import formatViews from "../shared/ViewesFormatter";
 
 const ChannelDetail = () => {
-  const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get("id");
 
   const [channelDetails, setChannelDetails] = useState<IChannel | null>(null);
   const [skeletonLoadingLength, setSkeletonLoadingLength] = useState<
@@ -41,19 +42,30 @@ const ChannelDetail = () => {
     <section className="bg-[#0f0f0f] flex-grow overflow-y-auto py-6 text-white">
       {channelDetails ? (
         <div>
-          <figure className="hidden sm:block">
-            <img src={channelDetails?.meta.image.banner[5].url} alt="" />
-          </figure>
-          <figure className="block sm:hidden">
-            <img src={channelDetails?.meta.image.mobileBanner[4].url} alt="" />
-          </figure>
+          {channelDetails.meta.image.banner !== null && (
+            <figure className="hidden sm:block">
+              <img src={channelDetails?.meta.image?.banner[5].url} alt="" />
+            </figure>
+          )}
+          {channelDetails.meta.image.mobileBanner !== null && (
+            <figure className="block sm:hidden">
+              <img
+                src={channelDetails?.meta.image?.mobileBanner[4].url}
+                alt=""
+              />
+            </figure>
+          )}
         </div>
       ) : (
         <SkeletonTheme baseColor="#282828" highlightColor="#404040">
           <Skeleton width="100%" height={200} className="z-10" />
         </SkeletonTheme>
       )}
-      <div className="flex flex-col items-center transform sm:-translate-y-14 my-10 sm:my-0">
+      <div
+        className={`flex flex-col items-center transform ${
+          channelDetails?.meta.image.banner !== null && "sm:-translate-y-14"
+        } my-10 sm:my-0`}
+      >
         {channelDetails ? (
           <>
             <figure className="rounded-full overflow-hidden w-32 h-32">
@@ -87,7 +99,7 @@ const ChannelDetail = () => {
           {channelDetails && channelDetails.data.length > 0 ? (
             channelDetails.data.map((data) => {
               return (
-                <Link key={Math.random()} to={`/videoDetail/${data.videoId}`}>
+                <Link key={Math.random()} to={`/watch?v=${data.videoId}`}>
                   <figure className="w-full relative">
                     <img
                       src={data.thumbnail[2].url}
