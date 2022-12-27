@@ -70,26 +70,29 @@ const SearchResult = () => {
             }
             if (result.type === "video") {
               return (
-                <Link
-                  to={`/watch?v=${result.videoId}`}
+                <div
                   className="flex flex-col sm:flex-row sm:items-start sm:space-x-5 space-y-4 sm:space-y-0"
                   key={Math.random()}
                 >
-                  <figure className="w-full sm:w-64 sm:min-w-[16rem] rounded-lg overflow-hidden">
-                    <img
-                      className="min-w-full"
-                      src={result.thumbnail[0].url}
-                      alt=""
-                    />
-                  </figure>
+                  <Link to={`/watch?v=${result.videoId}`}>
+                    <figure className="w-full sm:w-64 sm:min-w-[16rem] rounded-lg overflow-hidden">
+                      <img
+                        className="min-w-full"
+                        src={result.thumbnail[0].url}
+                        alt=""
+                      />
+                    </figure>
+                  </Link>
                   <div>
-                    <h4 className="text-white text-xl line-clamp-2 mb-1 break-word">
-                      {result.title}
-                    </h4>
-                    <p className="text-white text-xs mb-4">
-                      {formatViews(+result.viewCount)} views •{" "}
-                      {result.publishedText}
-                    </p>
+                    <Link to={`/watch?v=${result.videoId}`}>
+                      <h4 className="text-white text-xl line-clamp-2 mb-1 break-word">
+                        {result.title}
+                      </h4>
+                      <p className="text-white text-xs mb-4">
+                        {formatViews(+result.viewCount)} views •{" "}
+                        {result.publishedText}
+                      </p>
+                    </Link>
                     <Link
                       to={`/channel?id=${result.channelId}`}
                       className="flex items-center space-x-2"
@@ -102,7 +105,7 @@ const SearchResult = () => {
                       </p>
                     </Link>
                   </div>
-                </Link>
+                </div>
               );
             }
           })}

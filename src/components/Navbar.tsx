@@ -26,7 +26,7 @@ const Navbar = () => {
             setActiveLink("Home");
           }}
         >
-          <figure className="w-10">
+          <figure className="w-14">
             <img
               className="w-full h-auto"
               src="/images/youtube_logo.png"
@@ -37,7 +37,7 @@ const Navbar = () => {
         <form className="w-72 flex items-center rounded-3xl bg-gray-200 overflow-hidden">
           <input
             className="w-full px-4 py-2 focus:outline-none"
-            type="text"
+            type="search"
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             name=""
