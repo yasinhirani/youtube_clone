@@ -108,8 +108,16 @@ const History = () => {
             borderRadius="12px"
           >
             {skeletonLoadingLength.map(() => (
-              <div className="flex items-start space-x-5" key={Math.random()}>
-                <Skeleton width={240} height={160} />
+              <div
+                className="flex flex-col sm:flex-row sm:items-start sm:space-x-5 space-y-4 sm:space-y-0"
+                key={Math.random()}
+              >
+                <div className="block sm:hidden">
+                  <Skeleton height={200} />
+                </div>
+                <div className="hidden sm:block">
+                  <Skeleton width={240} height={200} />
+                </div>
                 <div className="w-full">
                   <Skeleton width="100%" count={2} />
                   <Skeleton width={250} className="mt-4" />

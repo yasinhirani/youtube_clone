@@ -122,7 +122,7 @@ const SearchResult = () => {
                   <Skeleton height={200} />
                 </div>
                 <div className="hidden sm:block">
-                  <Skeleton width={260} height={200} />
+                  <Skeleton width={240} height={200} />
                 </div>
                 <div className="w-full">
                   <Skeleton width="100%" count={2} />
