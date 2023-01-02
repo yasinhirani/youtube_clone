@@ -128,9 +128,9 @@ const VideoDetail = () => {
   }, [id]);
 
   return (
-    <section className="flex flex-col lg:flex-row flex-grow bg-[#0f0f0f] p-5 lg:space-x-5 overflow-y-auto space-y-5 lg:space-y-0">
-      <div className="flex-grow">
-        <div className="w-full h-[400px] lg:h-full">
+    <section className="flex flex-col lg:flex-row flex-grow bg-[#0f0f0f] px-5 lg:space-x-5 overflow-y-auto space-y-5 lg:space-y-0">
+      <div className="flex-grow flex flex-col py-5">
+        <div className="w-full h-full min-h-[400px] sm:min-h-[500px] xl:min-h-[750px]">
           <ReactPlayer
             url={`https://www.youtube.com/watch?v=${id}`}
             width="100%"
@@ -220,7 +220,7 @@ const VideoDetail = () => {
         </div>
       </div>
       <aside className="w-full lg:w-96 lg:min-w-[25rem]">
-        <div ref={divRef} className="grid grid-cols-1 gap-5">
+        <div ref={divRef} className="grid grid-cols-1 gap-5 lg:py-5">
           {recommendations && recommendations.length > 0
             ? recommendations.map((recommendation) => {
                 return (
