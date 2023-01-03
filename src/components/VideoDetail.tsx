@@ -7,7 +7,7 @@ import formatViews from "../shared/ViewesFormatter";
 // import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 // import { db } from "../Firebase";
 import {
-  IChannelDetails,
+  // IChannelDetails,
   IRecommendations,
   IVideoDetails,
 } from "../shared/model/videos.model";
@@ -21,17 +21,19 @@ const VideoDetail = () => {
     []
   );
   const [videoDetail, setVideoDetail] = useState<IVideoDetails | null>(null);
-  const [channelDetail, setChannelDetail] = useState<IChannelDetails | null>(
-    null
-  );
+  // const [channelDetail, setChannelDetail] = useState<IChannelDetails | null>(
+  //   null
+  // );
   const [readFullDescription, setReadFullDescription] =
     useState<boolean>(false);
 
   const [skeletonLoadingLength, setSkeletonLoadingLength] = useState<
     Array<number>
   >(new Array(10).fill(0));
+  const [chapterVisible, setChapterVisible] = useState<boolean>(false);
 
   const divRef = useRef<HTMLDivElement>(null);
+  const playerRef = useRef<ReactPlayer>(null);
 
   const getVideoRecommendations = async () => {
     setRecommendations([]);
@@ -62,42 +64,47 @@ const VideoDetail = () => {
       method: "GET",
       headers: {
         "X-RapidAPI-Key": "b270c8a6c1mshfa428feb3857501p110f3cjsn471755706752",
-        "X-RapidAPI-Host": "youtube-v3-alternative.p.rapidapi.com",
+        "X-RapidAPI-Host": "youtube138.p.rapidapi.com",
       },
     };
     await axios
       .get(
-        `https://youtube-v3-alternative.p.rapidapi.com/video?id=${id}`,
+        `https://youtube138.p.rapidapi.com/video/details/?id=${id}&hl=en&gl=IN`,
         options
       )
       .then((res) => {
         setVideoDetail(res.data);
-        getChannelDetails(res.data.channelId);
+        if (res.data.chapters.length > 0) {
+          setChapterVisible(true);
+        }
+        // getChannelDetails(res.data.channelId);
       });
   };
 
-  const getChannelDetails = async (channelId: string) => {
-    const options = {
-      method: "GET",
-      headers: {
-        "X-RapidAPI-Key": "b270c8a6c1mshfa428feb3857501p110f3cjsn471755706752",
-        "X-RapidAPI-Host": "youtube-v31.p.rapidapi.com",
-      },
-    };
-    await axios
-      .get(
-        `https://youtube-v31.p.rapidapi.com/channels?part=snippet%2Cstatistics&id=${channelId}`,
-        options
-      )
-      .then((res) => {
-        setChannelDetail(res.data?.items[0]);
-      });
-  };
+  // const getChannelDetails = async (channelId: string) => {
+  //   const options = {
+  //     method: "GET",
+  //     headers: {
+  //       "X-RapidAPI-Key": "b270c8a6c1mshfa428feb3857501p110f3cjsn471755706752",
+  //       "X-RapidAPI-Host": "youtube-v31.p.rapidapi.com",
+  //     },
+  //   };
+  //   await axios
+  //     .get(
+  //       `https://youtube-v31.p.rapidapi.com/channels?part=snippet%2Cstatistics&id=${channelId}`,
+  //       options
+  //     )
+  //     .then((res) => {
+  //       setChannelDetail(res.data?.items[0]);
+  //     });
+  // };
 
   const handleHistoryUpload = async () => {
     let historyAvailable = false;
     await axios
-      .get(`http://localhost:8080/historyAvailable?videoId=${videoDetail?.id}`)
+      .get(
+        `http://localhost:8080/historyAvailable?videoId=${videoDetail?.videoId}`
+      )
       .then((res) => {
         // console.log(res.data);
         historyAvailable = res.data.isAvailable;
@@ -109,11 +116,11 @@ const VideoDetail = () => {
       setTimeout(() => {
         axios
           .post("http://localhost:8080/history", {
-            channelName: videoDetail.channelTitle,
+            channelName: videoDetail.author.title,
             title: videoDetail.title,
-            videoId: videoDetail.id,
+            videoId: videoDetail.videoId,
             description: videoDetail.description,
-            thumbnail: videoDetail.thumbnail[3].url,
+            thumbnail: videoDetail.thumbnails[3].url,
             time: new Date().getTime(),
           })
           .catch(() => console.log("something went wrong"));
@@ -132,6 +139,7 @@ const VideoDetail = () => {
       <div className="flex-grow flex flex-col py-5">
         <div className="w-full h-full min-h-[400px] sm:min-h-[500px] xl:min-h-[750px]">
           <ReactPlayer
+            ref={playerRef}
             url={`https://www.youtube.com/watch?v=${id}`}
             width="100%"
             height="100%"
@@ -141,29 +149,43 @@ const VideoDetail = () => {
             pip={true}
           />
         </div>
+        <div>
+          {videoDetail &&
+            videoDetail.chapters.length > 0 &&
+            !chapterVisible && (
+              <button
+                className="text-white mt-4"
+                onClick={() => {
+                  setChapterVisible(true);
+                  if (divRef.current && window.innerWidth < 1024) {
+                    divRef.current.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+              >
+                View Chapters
+              </button>
+            )}
+        </div>
         <div className="mt-5">
           {videoDetail && (
             <h2 className="text-white font-semibold text-xl">
               {videoDetail.title}
             </h2>
           )}
-          {channelDetail && (
+          {videoDetail && (
             <Link
-              to={`/channel?id=${channelDetail.id}`}
+              to={`/channel?id=${videoDetail.author.channelId}`}
               className="flex items-center space-x-4 mt-4"
             >
               <figure className="w-10 h-10 rounded-full overflow-hidden">
-                <img
-                  src={channelDetail.snippet?.thumbnails?.medium?.url}
-                  alt=""
-                />
+                <img src={videoDetail.author.avatar[1].url} alt="" />
               </figure>
               <div>
                 <h4 className="text-white font-semibold">
-                  {channelDetail.snippet?.title}
+                  {videoDetail.author.title}
                 </h4>
                 <p className="text-gray-400 font-medium text-xs">
-                  {formatViews(+channelDetail.statistics?.subscriberCount)}{" "}
+                  {formatViews(videoDetail.author.stats.subscribers)}{" "}
                   subscribers
                 </p>
               </div>
@@ -173,10 +195,10 @@ const VideoDetail = () => {
             <div className="mt-3 bg-[#282828] p-4 rounded-lg">
               <div className="flex items-center space-x-5 text-sm">
                 <p className="text-white font-semibold">
-                  {formatViews(+videoDetail.viewCount)} views
+                  {formatViews(videoDetail.stats.views)} views
                 </p>
                 <p className="text-white font-semibold">
-                  {videoDetail.publishDate}
+                  {videoDetail.publishedDate}
                 </p>
               </div>
               <div
@@ -220,80 +242,122 @@ const VideoDetail = () => {
         </div>
       </div>
       <aside className="w-full lg:w-96 lg:min-w-[25rem]">
-        <div ref={divRef} className="grid grid-cols-1 gap-5 lg:py-5">
-          {recommendations && recommendations.length > 0
-            ? recommendations.map((recommendation) => {
-                return (
-                  <div
-                    key={Math.random()}
-                    className="flex items-start space-x-4"
-                  >
-                    <Link to={`/watch?v=${recommendation.id.videoId}`}>
-                      <figure className="w-44 min-w-[11rem] relative">
-                        <img
-                          className="min-w-full h-full rounded-xl"
-                          src={recommendation.snippet.thumbnails.medium.url}
-                          alt=""
-                        />
-                        {/* {recommendation.video_length !== "" && (
-                        <figcaption className="bg-black bg-opacity-95 rounded-lg px-2 py-1 absolute right-2 bottom-2 text-xs text-white font-semibold">
-                          {recommendation.video_length}
-                        </figcaption>
-                      )} */}
-                      </figure>
-                    </Link>
-                    <div>
-                      <Link to={`/watch?v=${recommendation.id.videoId}`}>
-                        <h4 className="text-white font-semibold line-clamp-2 break-all">
-                          {recommendation.snippet.title}
-                        </h4>
-                      </Link>
-                      <Link
-                        to={`/channel?id=${recommendation.snippet.channelId}`}
+        <div ref={divRef} className="lg:py-5">
+          {chapterVisible && (
+            <div className="flex flex-col border border-gray-600 rounded-lg mb-5 h-96 overflow-auto">
+              <div className="flex justify-between items-center space-x-4 w-full border-b border-gray-600 p-3">
+                <h5 className="text-white">Chapters</h5>
+                <button
+                  className="text-white text-lg"
+                  onClick={() => setChapterVisible(false)}
+                >
+                  x
+                </button>
+              </div>
+              <div className="flex flex-col space-y-5 mt-3 p-3">
+                {videoDetail &&
+                  videoDetail.chapters.map((chapter) => {
+                    return (
+                      <button
+                        key={Math.random()}
+                        className="text-left text-white flex items-center space-x-4"
+                        onClick={() => {
+                          if (playerRef.current) {
+                            playerRef.current.seekTo(
+                              chapter.startingMs / 1000,
+                              "seconds"
+                            );
+                          }
+                        }}
                       >
-                        <p className="text-gray-400 font-medium text-sm">
-                          {recommendation.snippet.channelTitle}
-                        </p>
+                        <figure className="w-14">
+                          <img src={chapter.thumbnails[0].url} alt="" />
+                        </figure>
+                        <span>{chapter.title}</span>
+                      </button>
+                    );
+                  })}
+              </div>
+            </div>
+          )}
+          <div className="grid grid-cols-1 gap-5">
+            {recommendations && recommendations.length > 0
+              ? recommendations.map((recommendation) => {
+                  return (
+                    <div
+                      key={Math.random()}
+                      className="flex items-start space-x-4"
+                    >
+                      <Link to={`/watch?v=${recommendation.id.videoId}`} onClick={() => setChapterVisible(false)}>
+                        <figure className="w-44 min-w-[11rem] relative">
+                          <img
+                            className="min-w-full h-full rounded-xl"
+                            src={recommendation.snippet.thumbnails.medium.url}
+                            alt=""
+                          />
+                          {/* {recommendation.video_length !== "" && (
+                          <figcaption className="bg-black bg-opacity-95 rounded-lg px-2 py-1 absolute right-2 bottom-2 text-xs text-white font-semibold">
+                            {recommendation.video_length}
+                          </figcaption>
+                        )} */}
+                        </figure>
                       </Link>
-                      <p className="text-gray-400 font-medium text-xs">
-                        {new Date(
-                          recommendation?.snippet?.publishedAt
-                        ).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })
-            : skeletonLoadingLength.map(() => {
-                return (
-                  <SkeletonTheme
-                    baseColor="#282828"
-                    highlightColor="#404040"
-                    borderRadius="12px"
-                    key={Math.random()}
-                  >
-                    <div className="flex items-start space-x-4">
                       <div>
-                        <Skeleton height={100} className="w-44 min-w-[11rem]" />
-                      </div>
-                      <div className="w-full">
-                        <h4 className="text-white font-semibold line-clamp-2">
-                          <Skeleton width="100%" count={2} />
-                        </h4>
-                        <p className="text-gray-400 text-sm mt-1">
-                          <Skeleton width="100%" />
-                        </p>
-                        <p className="text-gray-400 text-xs mt-1">
-                          <Skeleton width="100%" />
+                        <Link to={`/watch?v=${recommendation.id.videoId}`} onClick={() => setChapterVisible(false)}>
+                          <h4 className="text-white font-semibold line-clamp-2 break-all">
+                            {recommendation.snippet.title}
+                          </h4>
+                        </Link>
+                        <Link
+                          to={`/channel?id=${recommendation.snippet.channelId}`}
+                        >
+                          <p className="text-gray-400 font-medium text-sm">
+                            {recommendation.snippet.channelTitle}
+                          </p>
+                        </Link>
+                        <p className="text-gray-400 font-medium text-xs">
+                          {new Date(
+                            recommendation?.snippet?.publishedAt
+                          ).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })}
                         </p>
                       </div>
                     </div>
-                  </SkeletonTheme>
-                );
-              })}
+                  );
+                })
+              : skeletonLoadingLength.map(() => {
+                  return (
+                    <SkeletonTheme
+                      baseColor="#282828"
+                      highlightColor="#404040"
+                      borderRadius="12px"
+                      key={Math.random()}
+                    >
+                      <div className="flex items-start space-x-4">
+                        <div>
+                          <Skeleton
+                            height={100}
+                            className="w-44 min-w-[11rem]"
+                          />
+                        </div>
+                        <div className="w-full">
+                          <h4 className="text-white font-semibold line-clamp-2">
+                            <Skeleton width="100%" count={2} />
+                          </h4>
+                          <p className="text-gray-400 text-sm mt-1">
+                            <Skeleton width="100%" />
+                          </p>
+                          <p className="text-gray-400 text-xs mt-1">
+                            <Skeleton width="100%" />
+                          </p>
+                        </div>
+                      </div>
+                    </SkeletonTheme>
+                  );
+                })}
+          </div>
         </div>
       </aside>
     </section>

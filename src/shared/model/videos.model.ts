@@ -112,51 +112,107 @@ export interface IRecommendations {
 }
 
 // Channel Detail
-export interface Medium {
-  url: string;
-  width: number;
-  height: number;
-}
+// export interface Medium {
+//   url: string;
+//   width: number;
+//   height: number;
+// }
 
-export interface Thumbnails {
-  medium: Medium;
-}
+// export interface Thumbnails {
+//   medium: Medium;
+// }
 
-export interface Snippet {
-  title: string;
-  description: string;
-  customUrl: string;
-  publishedAt: Date;
-  thumbnails: Thumbnails;
-}
+// export interface Snippet {
+//   title: string;
+//   description: string;
+//   customUrl: string;
+//   publishedAt: Date;
+//   thumbnails: Thumbnails;
+// }
 
-export interface Statistics {
-  viewCount: string;
-  subscriberCount: string;
-}
+// export interface Statistics {
+//   viewCount: string;
+//   subscriberCount: string;
+// }
 
-export interface IChannelDetails {
-  id: string;
-  snippet: Snippet;
-  statistics: Statistics;
-}
+// export interface IChannelDetails {
+//   id: string;
+//   snippet: Snippet;
+//   statistics: Statistics;
+// }
 
 // For video details
-export interface Thumbnail {
+// export interface Thumbnail {
+//   url: string;
+//   width: number;
+//   height: number;
+// }
+
+// export interface IVideoDetails {
+//   id: string;
+//   channelTitle: string;
+//   title: string;
+//   channelId: string;
+//   description: string;
+//   thumbnail: Thumbnail[];
+//   viewCount: string;
+//   publishDate: string;
+// }
+
+export interface Avatar {
+  height: number;
   url: string;
   width: number;
+}
+
+export interface AuthorStats {
+  subscribers: number;
+}
+
+export interface Author {
+  avatar: Avatar[];
+  badges: any[];
+  canonicalBaseUrl: string;
+  channelId: string;
+  stats: AuthorStats;
+  title: string;
+}
+
+export interface ChapterThumbnails {
   height: number;
+  url: string;
+  width: number;
+}
+
+export interface Chapter {
+  startingMs: number;
+  thumbnails: ChapterThumbnails[];
+  title: string;
+}
+
+export interface VideoStats {
+  comments: number;
+  likes: number;
+  views: number;
+}
+
+export interface VideoThumbnails {
+  height: number;
+  url: string;
+  width: number;
 }
 
 export interface IVideoDetails {
-  id: string;
-  channelTitle: string;
-  title: string;
-  channelId: string;
+  author: Author;
+  chapters: Chapter[];
   description: string;
-  thumbnail: Thumbnail[];
-  viewCount: string;
-  publishDate: string;
+  isLiveContent: boolean;
+  isLiveNow: boolean;
+  publishedDate: string;
+  stats: VideoStats;
+  thumbnails: VideoThumbnails[];
+  title: string;
+  videoId: string;
 }
 
 // For history list
