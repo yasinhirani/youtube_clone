@@ -10,9 +10,13 @@ import {
   ChannelDetail,
   History,
   SearchResult,
+  Login,
+  Register,
+  ProtectedRoute,
 } from "./components/index";
 import {
   ActiveLinkContext,
+  AuthDataContext,
   SearchStringContext,
   TrendingVideosContext,
 } from "./context/Context";
@@ -24,6 +28,9 @@ function App() {
   const [activeLink, setActiveLink] = useState<string | null>("");
   const [searchString, setSearchString] = useState<string | null>("");
   const [trendingVideos, setTrendingVideos] = useState<IVideos[]>([]);
+  const [authData, setAuthData] = useState<string | null>(
+    localStorage.getItem("userEmail") || ""
+  );
 
   const ActiveLinkState = useMemo(
     () => ({
@@ -46,34 +53,63 @@ function App() {
     }),
     [trendingVideos]
   );
+  const AuthDataState = useMemo(
+    () => ({
+      authData,
+      setAuthData,
+    }),
+    [authData]
+  );
 
   return (
-    <ActiveLinkContext.Provider value={ActiveLinkState}>
-      <SearchStringContext.Provider value={SearchStringState}>
-        <TrendingVideosContext.Provider value={TrendingVideosState}>
-          <div className="w-full h-full flex flex-col overflow-hidden">
-            <Navbar />
-            <div
-              className={`w-full flex ${
-                location.pathname.includes("watch") && "flex-col"
-              } flex-grow overflow-hidden mt-20 ${
-                !location.pathname.includes("watch") && "mb-16 sm:mb-0"
-              }`}
-            >
-              {!location.pathname.includes("watch") && <Sidebar />}
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/search" element={<SearchResult />} />
-                <Route path="/watch" element={<VideoDetail />} />
-                <Route path="/channel" element={<ChannelDetail />} />
-                <Route path="/history" element={<History />} />
-              </Routes>
+    <AuthDataContext.Provider value={AuthDataState}>
+      <ActiveLinkContext.Provider value={ActiveLinkState}>
+        <SearchStringContext.Provider value={SearchStringState}>
+          <TrendingVideosContext.Provider value={TrendingVideosState}>
+            <div className="w-full h-full flex flex-col overflow-hidden">
+              {!location.pathname.includes("login") &&
+                !location.pathname.includes("register") && <Navbar />}
+              <div
+                className={`w-full flex ${
+                  location.pathname.includes("watch") && "flex-col"
+                } flex-grow overflow-hidden ${
+                  !location.pathname.includes("login") &&
+                  !location.pathname.includes("register") &&
+                  "mt-20"
+                } ${
+                  !location.pathname.includes("watch") &&
+                  !location.pathname.includes("login") &&
+                  !location.pathname.includes("register") &&
+                  "mb-16 sm:mb-0"
+                }`}
+              >
+                {!location.pathname.includes("watch") &&
+                  !location.pathname.includes("login") &&
+                  !location.pathname.includes("register") && <Sidebar />}
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route
+                    path="/login"
+                    element={<ProtectedRoute Component={Login} />}
+                  />
+                  <Route
+                    path="/register"
+                    element={<ProtectedRoute Component={Register} />}
+                  />
+                  <Route path="/search" element={<SearchResult />} />
+                  <Route path="/watch" element={<VideoDetail />} />
+                  <Route path="/channel" element={<ChannelDetail />} />
+                  <Route path="/history" element={<History />} />
+                </Routes>
+              </div>
+              {!location.pathname.includes("watch") &&
+                !location.pathname.includes("login") &&
+                !location.pathname.includes("register") && <BottomNavigation />}
             </div>
-            {!location.pathname.includes("watch") && <BottomNavigation />}
-          </div>
-        </TrendingVideosContext.Provider>
-      </SearchStringContext.Provider>
-    </ActiveLinkContext.Provider>
+          </TrendingVideosContext.Provider>
+        </SearchStringContext.Provider>
+      </ActiveLinkContext.Provider>
+    </AuthDataContext.Provider>
   );
 }
 

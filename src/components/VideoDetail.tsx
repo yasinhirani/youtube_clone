@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import ReactPlayer from "react-player";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
@@ -12,8 +12,11 @@ import {
   IVideoDetails,
 } from "../shared/model/videos.model";
 import axios from "axios";
+import { AuthDataContext } from "../context/Context";
 
 const VideoDetail = () => {
+  const { authData } = useContext(AuthDataContext);
+
   const [searchParams] = useSearchParams();
   const id = searchParams.get("v");
 
@@ -100,31 +103,48 @@ const VideoDetail = () => {
   // };
 
   const handleHistoryUpload = async () => {
-    let historyAvailable = false;
-    await axios
-      .get(
-        `http://localhost:8080/historyAvailable?videoId=${videoDetail?.videoId}`
-      )
-      .then((res) => {
-        // console.log(res.data);
-        historyAvailable = res.data.isAvailable;
-      });
-    if (historyAvailable) {
-      return;
-    }
-    if (videoDetail) {
-      setTimeout(() => {
-        axios
-          .post("http://localhost:8080/history", {
-            channelName: videoDetail.author.title,
-            title: videoDetail.title,
-            videoId: videoDetail.videoId,
-            description: videoDetail.description,
-            thumbnail: videoDetail.thumbnails[3].url,
-            time: new Date().getTime(),
-          })
-          .catch(() => console.log("something went wrong"));
-      }, 2000);
+    if (authData) {
+      let historyAvailable = false;
+      await axios
+        .get(
+          `http://localhost:8080/historyAvailable?videoId=${videoDetail?.videoId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
+        )
+        .then((res) => {
+          // console.log(res.data);
+          historyAvailable = res.data.success;
+        });
+      if (historyAvailable) {
+        return;
+      }
+      if (videoDetail) {
+        setTimeout(() => {
+          axios
+            .post(
+              "http://localhost:8080/history",
+              {
+                channelName: videoDetail.author.title,
+                title: videoDetail.title,
+                videoId: videoDetail.videoId,
+                description: videoDetail.description,
+                thumbnail: videoDetail.thumbnails[3].url,
+                time: new Date().getTime(),
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem(
+                    "access_token"
+                  )}`,
+                },
+              }
+            )
+            .catch(() => console.log("something went wrong"));
+        }, 2000);
+      }
     }
   };
 
@@ -288,7 +308,10 @@ const VideoDetail = () => {
                       key={Math.random()}
                       className="flex items-start space-x-4"
                     >
-                      <Link to={`/watch?v=${recommendation.id.videoId}`} onClick={() => setChapterVisible(false)}>
+                      <Link
+                        to={`/watch?v=${recommendation.id.videoId}`}
+                        onClick={() => setChapterVisible(false)}
+                      >
                         <figure className="w-44 min-w-[11rem] relative">
                           <img
                             className="min-w-full h-full rounded-xl"
@@ -303,7 +326,10 @@ const VideoDetail = () => {
                         </figure>
                       </Link>
                       <div>
-                        <Link to={`/watch?v=${recommendation.id.videoId}`} onClick={() => setChapterVisible(false)}>
+                        <Link
+                          to={`/watch?v=${recommendation.id.videoId}`}
+                          onClick={() => setChapterVisible(false)}
+                        >
                           <h4 className="text-white font-semibold line-clamp-2 break-all">
                             {recommendation.snippet.title}
                           </h4>

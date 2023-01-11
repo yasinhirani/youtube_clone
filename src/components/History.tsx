@@ -2,43 +2,86 @@ import axios from "axios";
 import React, { useEffect, useState, useContext } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { Link } from "react-router-dom";
-import { ActiveLinkContext } from "../context/Context";
+import { ActiveLinkContext, AuthDataContext } from "../context/Context";
 import { IHistories } from "../shared/model/videos.model";
 
 const History = () => {
   const { setActiveLink } = useContext(ActiveLinkContext);
+  const { authData } = useContext(AuthDataContext);
 
   const [historyData, setHistoryData] = useState<IHistories[]>([]);
   const [historyDataLoading, setHistoryDataLoading] = useState<boolean>(false);
+  const [historyAvalibalityMessage, setHistoryAvalibalityMessage] =
+    useState<string>("");
   const [skeletonLoadingLength, setSkeletonLoadingLength] = useState<
     Array<number>
   >(new Array(5).fill(0));
 
   const getHistoryData = async () => {
     setHistoryDataLoading(true);
-    axios.get("http://localhost:8080/getHistoryData").then((res) => {
-      setHistoryData(res.data);
+    if (authData) {
+      axios
+        .get("http://localhost:8080/getHistoryData", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        })
+        .then((res) => {
+          setHistoryData(res.data);
+          if (res.data.length === 0) {
+            setHistoryAvalibalityMessage("No History Found");
+          }
+          setHistoryDataLoading(false);
+        })
+        .catch((err) => {
+          console.log(err.response.data.message);
+          setHistoryData([]);
+          setHistoryDataLoading(false);
+        });
+    } else {
+      setHistoryAvalibalityMessage("Please login to see your history")
+      setHistoryData([]);
       setHistoryDataLoading(false);
-    });
+    }
   };
 
   const handleDelete = async (id: string) => {
-    await axios
-      .post("http://localhost:8080/deleteHistory", { videoId: id })
-      .then((res) => {
-        if (res.data.deleted) {
-          getHistoryData();
-        } else {
-          console.log("some error occurred");
-        }
-      });
+    if (authData) {
+      await axios
+        .post(
+          "http://localhost:8080/deleteHistory",
+          { videoId: id },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
+        )
+        .then((res) => {
+          if (res.data.success) {
+            getHistoryData();
+          } else {
+            console.log("some error occurred");
+          }
+        });
+    }
   };
 
   const updateTimeStamp = async (videoId: string) => {
-    await axios.post("http://localhost:8080/updateTime", {
-      videoId: videoId,
-      time: new Date().getTime(),
-    });
+    if (authData) {
+      await axios.post(
+        "http://localhost:8080/updateTime",
+        {
+          videoId: videoId,
+          time: new Date().getTime(),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+    }
   };
 
   useEffect(() => {
@@ -132,7 +175,7 @@ const History = () => {
         )}
         {historyData && !historyDataLoading && historyData.length <= 0 && (
           <h4 className="text-2xl text-white font-semibold">
-            No History Found
+            {historyAvalibalityMessage}
           </h4>
         )}
       </div>

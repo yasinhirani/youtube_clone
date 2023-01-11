@@ -13,6 +13,11 @@ export interface ITrendingVideosContext {
   setTrendingVideos: React.Dispatch<React.SetStateAction<IVideos[]>>;
 }
 
+export interface IAuthDataContext {
+  authData: string | null;
+  setAuthData: React.Dispatch<React.SetStateAction<string | null>>;
+}
+
 export interface Thumbnail {
   url: string;
   width: number;

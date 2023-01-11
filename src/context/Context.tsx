@@ -3,6 +3,7 @@ import {
   ISearchStringContext,
   IActiveLinkContext,
   ITrendingVideosContext,
+  IAuthDataContext,
 } from "../shared/model/videos.model";
 
 export const ActiveLinkContext = createContext<IActiveLinkContext>({
@@ -18,6 +19,11 @@ export const SearchStringContext = createContext<ISearchStringContext>({
 export const TrendingVideosContext = createContext<ITrendingVideosContext>({
   trendingVideos: [],
   setTrendingVideos: () => [],
+});
+
+export const AuthDataContext = createContext<IAuthDataContext>({
+  authData : "",
+  setAuthData: () => {},
 });
 
 // export const AuthContext = createContext<any>(null);
