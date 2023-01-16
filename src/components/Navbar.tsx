@@ -6,6 +6,8 @@ import {
   SearchStringContext,
 } from "../context/Context";
 import { Menu, Transition } from "@headlessui/react";
+import { toast } from "react-toastify";
+import ToastConfig from "./ToastConfig";
 
 const Navbar = () => {
   const { setActiveLink } = useContext(ActiveLinkContext);
@@ -106,6 +108,9 @@ const Navbar = () => {
                 leaveTo="transform opacity-0 scale-95"
               >
                 <Menu.Items className="absolute right-0 mt-2 w-36 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  {/* <Menu.Item>
+                    <p className="border-b px-3 py-2">{authData}</p>
+                  </Menu.Item> */}
                   <Menu.Item>
                     <button
                       className="w-full text-left px-3 py-2"
@@ -113,6 +118,8 @@ const Navbar = () => {
                       onClick={() => {
                         localStorage.clear();
                         setAuthData("");
+                        toast.success("Logout Successful", ToastConfig);
+                        navigate("/");
                       }}
                     >
                       logout

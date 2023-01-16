@@ -1,9 +1,9 @@
-import axios from "axios";
 import React, { useEffect, useState, useContext } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { Link } from "react-router-dom";
 import { ActiveLinkContext, AuthDataContext } from "../context/Context";
 import { IHistories } from "../shared/model/videos.model";
+import { privateAxios } from "../shared/service/axios";
 
 const History = () => {
   const { setActiveLink } = useContext(ActiveLinkContext);
@@ -11,7 +11,7 @@ const History = () => {
 
   const [historyData, setHistoryData] = useState<IHistories[]>([]);
   const [historyDataLoading, setHistoryDataLoading] = useState<boolean>(false);
-  const [historyAvalibalityMessage, setHistoryAvalibalityMessage] =
+  const [historyAvailabilityMessage, setHistoryAvailabilityMessage] =
     useState<string>("");
   const [skeletonLoadingLength, setSkeletonLoadingLength] = useState<
     Array<number>
@@ -20,16 +20,12 @@ const History = () => {
   const getHistoryData = async () => {
     setHistoryDataLoading(true);
     if (authData) {
-      axios
-        .get("http://localhost:8080/getHistoryData", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        })
+      privateAxios
+        .get("/getHistoryData")
         .then((res) => {
           setHistoryData(res.data);
           if (res.data.length === 0) {
-            setHistoryAvalibalityMessage("No History Found");
+            setHistoryAvailabilityMessage("No History Found");
           }
           setHistoryDataLoading(false);
         })
@@ -39,7 +35,7 @@ const History = () => {
           setHistoryDataLoading(false);
         });
     } else {
-      setHistoryAvalibalityMessage("Please login to see your history")
+      setHistoryAvailabilityMessage("Please login to see your history");
       setHistoryData([]);
       setHistoryDataLoading(false);
     }
@@ -47,42 +43,24 @@ const History = () => {
 
   const handleDelete = async (id: string) => {
     if (authData) {
-      await axios
-        .post(
-          "http://localhost:8080/deleteHistory",
-          { videoId: id },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-          }
-        )
-        .then((res) => {
-          if (res.data.success) {
-            getHistoryData();
-          } else {
-            console.log("some error occurred");
-          }
-        });
+      await privateAxios.post("/deleteHistory", { videoId: id }).then((res) => {
+        if (res.data.success) {
+          getHistoryData();
+        } else {
+          console.log("some error occurred");
+        }
+      });
     }
   };
 
-  const updateTimeStamp = async (videoId: string) => {
-    if (authData) {
-      await axios.post(
-        "http://localhost:8080/updateTime",
-        {
-          videoId: videoId,
-          time: new Date().getTime(),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
-    }
-  };
+  // const updateTimeStamp = async (videoId: string) => {
+  //   if (authData) {
+  //     await privateAxios.post("/updateTime", {
+  //       videoId: videoId,
+  //       time: new Date().getTime(),
+  //     });
+  //   }
+  // };
 
   useEffect(() => {
     getHistoryData();
@@ -105,7 +83,7 @@ const History = () => {
                 <Link
                   to={`/watch?v=${data.videoId}`}
                   className="flex flex-col sm:flex-row sm:items-start sm:space-x-5 space-y-4 sm:space-y-0"
-                  onClick={() => updateTimeStamp(data.videoId)}
+                  // onClick={() => updateTimeStamp(data.videoId)}
                 >
                   <figure className="w-full sm:w-56 lg:w-64 min-w-[14rem] lg:min-w-[16rem] rounded-lg overflow-hidden">
                     <img className="min-w-full" src={data.thumbnail} alt="" />
@@ -175,7 +153,7 @@ const History = () => {
         )}
         {historyData && !historyDataLoading && historyData.length <= 0 && (
           <h4 className="text-2xl text-white font-semibold">
-            {historyAvalibalityMessage}
+            {historyAvailabilityMessage}
           </h4>
         )}
       </div>

@@ -2,7 +2,9 @@ import axios from "axios";
 import { Formik } from "formik";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import RegisterValidation from "../shared/validation/Register.validation";
+import ToastConfig from "./ToastConfig";
 
 interface IRegisterValues {
   email: string;
@@ -28,12 +30,15 @@ const Register = () => {
         })
         .then((res) => {
           if (res.data.success) {
+            toast.success(res.data.message, ToastConfig);
             navigate("/login");
           } else {
+            toast.error(res.data.message, ToastConfig);
             console.log(res.data.message);
           }
         });
     } else {
+      toast.error("Password and confirm password must match", ToastConfig);
       console.log("Password and confirm password must match");
     }
   };

@@ -21,6 +21,8 @@ import {
   TrendingVideosContext,
 } from "./context/Context";
 import { IVideos } from "./shared/model/videos.model";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const location = useLocation();
@@ -62,54 +64,59 @@ function App() {
   );
 
   return (
-    <AuthDataContext.Provider value={AuthDataState}>
-      <ActiveLinkContext.Provider value={ActiveLinkState}>
-        <SearchStringContext.Provider value={SearchStringState}>
-          <TrendingVideosContext.Provider value={TrendingVideosState}>
-            <div className="w-full h-full flex flex-col overflow-hidden">
-              {!location.pathname.includes("login") &&
-                !location.pathname.includes("register") && <Navbar />}
-              <div
-                className={`w-full flex ${
-                  location.pathname.includes("watch") && "flex-col"
-                } flex-grow overflow-hidden ${
-                  !location.pathname.includes("login") &&
-                  !location.pathname.includes("register") &&
-                  "mt-20"
-                } ${
-                  !location.pathname.includes("watch") &&
-                  !location.pathname.includes("login") &&
-                  !location.pathname.includes("register") &&
-                  "mb-16 sm:mb-0"
-                }`}
-              >
+    <>
+      <AuthDataContext.Provider value={AuthDataState}>
+        <ActiveLinkContext.Provider value={ActiveLinkState}>
+          <SearchStringContext.Provider value={SearchStringState}>
+            <TrendingVideosContext.Provider value={TrendingVideosState}>
+              <div className="w-full h-full flex flex-col overflow-hidden">
+                {!location.pathname.includes("login") &&
+                  !location.pathname.includes("register") && <Navbar />}
+                <div
+                  className={`w-full flex ${
+                    location.pathname.includes("watch") && "flex-col"
+                  } flex-grow overflow-hidden ${
+                    !location.pathname.includes("login") &&
+                    !location.pathname.includes("register") &&
+                    "mt-20"
+                  } ${
+                    !location.pathname.includes("watch") &&
+                    !location.pathname.includes("login") &&
+                    !location.pathname.includes("register") &&
+                    "mb-16 sm:mb-0"
+                  }`}
+                >
+                  {!location.pathname.includes("watch") &&
+                    !location.pathname.includes("login") &&
+                    !location.pathname.includes("register") && <Sidebar />}
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route
+                      path="/login"
+                      element={<ProtectedRoute Component={Login} />}
+                    />
+                    <Route
+                      path="/register"
+                      element={<ProtectedRoute Component={Register} />}
+                    />
+                    <Route path="/search" element={<SearchResult />} />
+                    <Route path="/watch" element={<VideoDetail />} />
+                    <Route path="/channel" element={<ChannelDetail />} />
+                    <Route path="/history" element={<History />} />
+                  </Routes>
+                </div>
                 {!location.pathname.includes("watch") &&
                   !location.pathname.includes("login") &&
-                  !location.pathname.includes("register") && <Sidebar />}
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route
-                    path="/login"
-                    element={<ProtectedRoute Component={Login} />}
-                  />
-                  <Route
-                    path="/register"
-                    element={<ProtectedRoute Component={Register} />}
-                  />
-                  <Route path="/search" element={<SearchResult />} />
-                  <Route path="/watch" element={<VideoDetail />} />
-                  <Route path="/channel" element={<ChannelDetail />} />
-                  <Route path="/history" element={<History />} />
-                </Routes>
+                  !location.pathname.includes("register") && (
+                    <BottomNavigation />
+                  )}
               </div>
-              {!location.pathname.includes("watch") &&
-                !location.pathname.includes("login") &&
-                !location.pathname.includes("register") && <BottomNavigation />}
-            </div>
-          </TrendingVideosContext.Provider>
-        </SearchStringContext.Provider>
-      </ActiveLinkContext.Provider>
-    </AuthDataContext.Provider>
+            </TrendingVideosContext.Provider>
+          </SearchStringContext.Provider>
+        </ActiveLinkContext.Provider>
+      </AuthDataContext.Provider>
+      <ToastContainer />
+    </>
   );
 }
 

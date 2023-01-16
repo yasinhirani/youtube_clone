@@ -10,7 +10,9 @@ import axios from "axios";
 
 const HomePage = () => {
   const { setActiveLink } = useContext(ActiveLinkContext);
-  const { trendingVideos, setTrendingVideos } = useContext(TrendingVideosContext);
+  const { trendingVideos, setTrendingVideos } = useContext(
+    TrendingVideosContext
+  );
 
   const [skeletonLoadingLength, setSkeletonLoadingLength] = useState<
     Array<number>
@@ -55,7 +57,7 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    trendingVideos.length <=0 && getTrendingVideos();
+    trendingVideos.length <= 0 && getTrendingVideos();
     setActiveLink("Home");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

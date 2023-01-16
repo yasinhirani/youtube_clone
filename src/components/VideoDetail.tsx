@@ -13,6 +13,7 @@ import {
 } from "../shared/model/videos.model";
 import axios from "axios";
 import { AuthDataContext } from "../context/Context";
+import { privateAxios } from "../shared/service/axios";
 
 const VideoDetail = () => {
   const { authData } = useContext(AuthDataContext);
@@ -105,43 +106,30 @@ const VideoDetail = () => {
   const handleHistoryUpload = async () => {
     if (authData) {
       let historyAvailable = false;
-      await axios
-        .get(
-          `http://localhost:8080/historyAvailable?videoId=${videoDetail?.videoId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-          }
-        )
-        .then((res) => {
-          // console.log(res.data);
-          historyAvailable = res.data.success;
-        });
+      await privateAxios.get(`/historyAvailable?videoId=${id}`).then((res) => {
+        // console.log(res.data);
+        historyAvailable = res.data.success;
+      });
       if (historyAvailable) {
+        setTimeout(() => {
+          privateAxios.post("/updateTime", {
+            videoId: id,
+            time: new Date().getTime(),
+          });
+        }, 2000);
         return;
       }
       if (videoDetail) {
         setTimeout(() => {
-          axios
-            .post(
-              "http://localhost:8080/history",
-              {
-                channelName: videoDetail.author.title,
-                title: videoDetail.title,
-                videoId: videoDetail.videoId,
-                description: videoDetail.description,
-                thumbnail: videoDetail.thumbnails[3].url,
-                time: new Date().getTime(),
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem(
-                    "access_token"
-                  )}`,
-                },
-              }
-            )
+          privateAxios
+            .post("/history", {
+              channelName: videoDetail.author.title,
+              title: videoDetail.title,
+              videoId: videoDetail.videoId,
+              description: videoDetail.description,
+              thumbnail: videoDetail.thumbnails[3].url,
+              time: new Date().getTime(),
+            })
             .catch(() => console.log("something went wrong"));
         }, 2000);
       }
@@ -169,23 +157,21 @@ const VideoDetail = () => {
             pip={true}
           />
         </div>
-        <div>
-          {videoDetail &&
-            videoDetail.chapters.length > 0 &&
-            !chapterVisible && (
-              <button
-                className="text-white mt-4"
-                onClick={() => {
-                  setChapterVisible(true);
-                  if (divRef.current && window.innerWidth < 1024) {
-                    divRef.current.scrollIntoView({ behavior: "smooth" });
-                  }
-                }}
-              >
-                View Chapters
-              </button>
-            )}
-        </div>
+        {videoDetail && videoDetail.chapters.length > 0 && !chapterVisible && (
+          <div>
+            <button
+              className="text-white mt-4"
+              onClick={() => {
+                setChapterVisible(true);
+                if (divRef.current && window.innerWidth < 1024) {
+                  divRef.current.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
+            >
+              View Chapters
+            </button>
+          </div>
+        )}
         <div className="mt-5">
           {videoDetail && (
             <h2 className="text-white font-semibold text-xl">
@@ -330,7 +316,7 @@ const VideoDetail = () => {
                           to={`/watch?v=${recommendation.id.videoId}`}
                           onClick={() => setChapterVisible(false)}
                         >
-                          <h4 className="text-white font-semibold line-clamp-2 break-all">
+                          <h4 className="text-white font-semibold line-clamp-2 break-word">
                             {recommendation.snippet.title}
                           </h4>
                         </Link>

@@ -4,6 +4,8 @@ import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthDataContext } from "../context/Context";
 import LoginValidation from "../shared/validation/Login.validation";
+import { toast } from "react-toastify";
+import ToastConfig from "./ToastConfig";
 
 interface ILoginValues {
   email: string;
@@ -22,12 +24,14 @@ const Login = () => {
   const handleSubmit = (values: ILoginValues) => {
     axios.post("http://localhost:8181/api/login", values).then((res) => {
       if (res.data.success) {
+        toast.success("Login Successful", ToastConfig);
         localStorage.setItem("access_token", res.data.access_token);
         localStorage.setItem("userEmail", res.data.authData.email);
         setAuthData(res.data.authData.email);
         navigate("/");
       } else {
         console.log(res.data.message);
+        toast.error(res.data.message, ToastConfig);
       }
     });
   };
