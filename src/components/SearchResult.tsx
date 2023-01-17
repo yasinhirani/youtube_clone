@@ -75,20 +75,25 @@ const SearchResult = () => {
                   key={Math.random()}
                 >
                   <Link to={`/watch?v=${result.videoId}`}>
-                    <figure className="w-full sm:w-64 sm:min-w-[16rem] rounded-lg overflow-hidden">
+                    <figure className="w-full sm:w-64 sm:min-w-[16rem] rounded-xl overflow-hidden relative">
                       <img
                         className="min-w-full"
                         src={result.thumbnail[0].url}
                         alt=""
                       />
+                      {result.lengthText !== "" && (
+                        <figcaption className="bg-black bg-opacity-80 rounded-md px-1.5 py-0.5 absolute right-2 bottom-2 text-xs text-white font-semibold">
+                          {result.lengthText}
+                        </figcaption>
+                      )}
                     </figure>
                   </Link>
                   <div>
                     <Link to={`/watch?v=${result.videoId}`}>
-                      <h4 className="text-white text-xl line-clamp-2 mb-1 break-word">
+                      <h4 className="text-white text-lg font-medium line-clamp-2 mb-1 break-word">
                         {result.title}
                       </h4>
-                      <p className="text-white text-xs mb-4">
+                      <p className="text-xs font-medium text-secondary mb-4">
                         {formatViews(+result.viewCount)} views •{" "}
                         {result.publishedText}
                       </p>
@@ -100,7 +105,7 @@ const SearchResult = () => {
                       <figure className="w-6 h-6 rounded-full overflow-hidden">
                         <img src={result.channelThumbnail[0].url} alt="" />
                       </figure>
-                      <p className="text-gray-400 text-xs">
+                      <p className="text-secondary font-medium text-xs">
                         {result.channelTitle}
                       </p>
                     </Link>
@@ -125,7 +130,7 @@ const SearchResult = () => {
                   <Skeleton height={200} />
                 </div>
                 <div className="hidden sm:block">
-                  <Skeleton width={240} height={200} />
+                  <Skeleton width={260} height={150} />
                 </div>
                 <div className="w-full">
                   <Skeleton width="100%" count={2} />

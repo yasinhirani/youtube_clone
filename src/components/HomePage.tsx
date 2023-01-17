@@ -86,24 +86,24 @@ const HomePage = () => {
                       <img
                         src={videos.thumbnails[2].url}
                         alt=""
-                        className="w-full h-auto home__thumbnail rounded-lg"
+                        className="w-full h-auto home__thumbnail rounded-xl"
                       />
                       {videos.video_length !== "" && (
-                        <figcaption className="bg-black bg-opacity-95 rounded-lg px-2 py-1 absolute right-2 bottom-2 text-xs text-white font-semibold">
+                        <figcaption className="bg-black bg-opacity-80 rounded-md px-1.5 py-0.5 absolute right-2 bottom-2 text-xs text-white font-semibold">
                           {videos.video_length}
                         </figcaption>
                       )}
                     </figure>
-                    <h4 className="text-white my-2 text-base font-semibold line-clamp-2">
+                    <h4 className="text-white my-2 text-base font-medium line-clamp-2">
                       {videos.title}
                     </h4>
                   </Link>
                   <Link to={`/channel?id=${videos.channel_id}`}>
-                    <p className="text-gray-400 font-medium text-sm">
+                    <p className="text-secondary font-medium text-sm">
                       {videos.author}
                     </p>
                     {videos.video_length !== "UPCOMING" && (
-                      <p className="text-gray-400 font-medium text-xs mt-1">
+                      <p className="text-secondary font-medium text-xs mt-1">
                         {formatViews(videos.number_of_views)} •{" "}
                         {videos.published_time}
                       </p>

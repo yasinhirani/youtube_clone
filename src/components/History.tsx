@@ -1,13 +1,16 @@
 import React, { useEffect, useState, useContext } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import { ActiveLinkContext, AuthDataContext } from "../context/Context";
 import { IHistories } from "../shared/model/videos.model";
 import { privateAxios } from "../shared/service/axios";
+import ToastConfig from "./ToastConfig";
 
 const History = () => {
   const { setActiveLink } = useContext(ActiveLinkContext);
   const { authData } = useContext(AuthDataContext);
+  // const navigate = useNavigate();
 
   const [historyData, setHistoryData] = useState<IHistories[]>([]);
   const [historyDataLoading, setHistoryDataLoading] = useState<boolean>(false);
@@ -30,9 +33,16 @@ const History = () => {
           setHistoryDataLoading(false);
         })
         .catch((err) => {
-          console.log(err.response.data.message);
+          console.log(err.response.data.message.name);
+          toast.error("Token invalid, please logout and login again", ToastConfig);
           setHistoryData([]);
           setHistoryDataLoading(false);
+          setHistoryAvailabilityMessage("No History Available")
+          // if (err.response.data.message.name === "JsonWebTokenError") {
+          //   localStorage.clear();
+          //   setAuthData("");
+          //   navigate("/login");
+          // }
         });
     } else {
       setHistoryAvailabilityMessage("Please login to see your history");
@@ -85,17 +95,17 @@ const History = () => {
                   className="flex flex-col sm:flex-row sm:items-start sm:space-x-5 space-y-4 sm:space-y-0"
                   // onClick={() => updateTimeStamp(data.videoId)}
                 >
-                  <figure className="w-full sm:w-56 lg:w-64 min-w-[14rem] lg:min-w-[16rem] rounded-lg overflow-hidden">
+                  <figure className="w-full sm:w-56 lg:w-64 min-w-[14rem] lg:min-w-[16rem] rounded-xl overflow-hidden">
                     <img className="min-w-full" src={data.thumbnail} alt="" />
                   </figure>
                   <div>
-                    <h4 className="text-white text-xl line-clamp-2 history__card-title mb-1 mr-10">
+                    <h4 className="text-white text-lg font-medium line-clamp-2 history__card-title mb-1 mr-10">
                       {data.title}
                     </h4>
-                    <p className="text-gray-400 font-medium text-xs">
+                    <p className="text-secondary font-medium text-sm mt-2">
                       {data.channelName}
                     </p>
-                    <p className="text-gray-400  text-xs line-clamp-2 mt-2 break-all">
+                    <p className="text-secondary  text-xs line-clamp-2 mt-2 break-word">
                       {data.description}
                     </p>
                   </div>
@@ -137,7 +147,7 @@ const History = () => {
                   <Skeleton height={200} />
                 </div>
                 <div className="hidden sm:block">
-                  <Skeleton width={240} height={200} />
+                  <Skeleton width={260} height={150} />
                 </div>
                 <div className="w-full">
                   <Skeleton width="100%" count={2} />

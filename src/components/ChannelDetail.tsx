@@ -104,7 +104,7 @@ const ChannelDetail = () => {
                     <img
                       src={data.thumbnail[2].url}
                       alt=""
-                      className="w-full h-auto home__thumbnail rounded-lg"
+                      className="w-full h-auto home__thumbnail rounded-xl"
                     />
                     {data.lengthText !== "" && (
                       <figcaption className="bg-black bg-opacity-95 rounded-lg px-2 py-1 absolute right-2 bottom-2 text-xs text-white font-semibold">
@@ -112,7 +112,7 @@ const ChannelDetail = () => {
                       </figcaption>
                     )}
                   </figure>
-                  <h4 className="text-white my-2 text-base font-semibold line-clamp-2">
+                  <h4 className="text-white my-2 text-base font-medium line-clamp-2">
                     {data.title}
                   </h4>
                   <p className="text-gray-400 font-medium text-sm">
