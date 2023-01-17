@@ -102,12 +102,12 @@ const ChannelDetail = () => {
                 <Link key={Math.random()} to={`/watch?v=${data.videoId}`}>
                   <figure className="w-full relative">
                     <img
-                      src={data.thumbnail[2].url}
+                      src={data.thumbnail[3].url}
                       alt=""
                       className="w-full h-auto home__thumbnail rounded-xl"
                     />
                     {data.lengthText !== "" && (
-                      <figcaption className="bg-black bg-opacity-95 rounded-lg px-2 py-1 absolute right-2 bottom-2 text-xs text-white font-semibold">
+                      <figcaption className="bg-black bg-opacity-80 rounded-lg px-2 py-1 absolute right-2 bottom-2 text-xs text-white font-semibold">
                         {data.lengthText}
                       </figcaption>
                     )}
