@@ -62,7 +62,7 @@ const ChannelDetail = () => {
         </SkeletonTheme>
       )}
       <div
-        className={`flex flex-col items-center transform ${
+        className={`flex flex-col items-center transform z-10 relative ${
           channelDetails?.meta.image.banner !== null && "sm:-translate-y-14"
         } my-10 sm:my-0`}
       >

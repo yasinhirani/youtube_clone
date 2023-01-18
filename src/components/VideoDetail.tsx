@@ -211,7 +211,7 @@ const VideoDetail = () => {
                 <h4 className="text-white font-semibold">
                   {videoDetail.author.title}
                 </h4>
-                <p className="text-gray-400 font-medium text-xs">
+                <p className="text-secondary font-medium text-xs">
                   {formatViews(videoDetail.author.stats.subscribers)}{" "}
                   subscribers
                 </p>
@@ -344,11 +344,11 @@ const VideoDetail = () => {
                         <Link
                           to={`/channel?id=${recommendation.snippet.channelId}`}
                         >
-                          <p className="text-gray-400 font-medium text-sm">
+                          <p className="text-secondary font-medium text-sm">
                             {recommendation.snippet.channelTitle}
                           </p>
                         </Link>
-                        <p className="text-gray-400 font-medium text-xs">
+                        <p className="text-secondary font-medium text-xs">
                           {new Date(
                             recommendation?.snippet?.publishedAt
                           ).toLocaleDateString("en-US", {
