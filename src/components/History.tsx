@@ -66,6 +66,7 @@ const History = () => {
           if (res.data.success) {
             getHistoryData();
           } else {
+            toast.error(res.data.message, ToastConfig);
             console.log("some error occurred");
           }
         })
