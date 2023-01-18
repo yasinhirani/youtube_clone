@@ -23,7 +23,7 @@ const Login = () => {
 
   const handleSubmit = (values: ILoginValues) => {
     axios
-      .post("http://localhost:8181/api/login", values)
+      .post("http://localhost:8080/api/login", values)
       .then((res) => {
         if (res.data.success) {
           toast.success("Login Successful", ToastConfig);

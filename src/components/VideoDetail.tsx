@@ -109,13 +109,12 @@ const VideoDetail = () => {
     if (authData) {
       let historyAvailable = false;
       await privateAxios
-        .get(`/historyAvailable?videoId=${id}`)
+        .get(`/api/historyAvailable?videoId=${id}`)
         .then((res) => {
           // console.log(res.data);
           historyAvailable = res.data.success;
         })
         .catch((err) => {
-          historyAvailable = false;
           if (err.code === "ERR_NETWORK") {
             toast.error("Server issue", ToastConfig);
           } else {
@@ -124,11 +123,10 @@ const VideoDetail = () => {
               ToastConfig
             );
           }
-          return;
         });
       if (historyAvailable) {
         setTimeout(() => {
-          privateAxios.post("/updateTime", {
+          privateAxios.post("/api/updateTime", {
             videoId: id,
             time: new Date().getTime(),
           });
@@ -138,7 +136,7 @@ const VideoDetail = () => {
       if (videoDetail) {
         setTimeout(() => {
           privateAxios
-            .post("/history", {
+            .post("/api/history", {
               channelName: videoDetail.author.title,
               title: videoDetail.title,
               videoId: videoDetail.videoId,
@@ -146,11 +144,15 @@ const VideoDetail = () => {
               thumbnail: videoDetail.thumbnails[3].url,
               time: new Date().getTime(),
             })
-            .catch(() => {
-              toast.error(
-                "Token invalid, please logout and login again",
-                ToastConfig
-              );
+            .catch((err) => {
+              if (err.code === "ERR_NETWORK") {
+                toast.error("Server issue", ToastConfig);
+              } else {
+                toast.error(
+                  "Token invalid, please logout and login again",
+                  ToastConfig
+                );
+              }
             });
         }, 2000);
       }

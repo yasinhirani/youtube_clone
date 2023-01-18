@@ -24,7 +24,7 @@ const Register = () => {
   const handleSubmit = (values: IRegisterValues) => {
     if (values.password === values.confirmPassword) {
       axios
-        .post("http://localhost:8181/api/register", {
+        .post("http://localhost:8080/api/register", {
           email: values.email,
           password: values.password,
         })

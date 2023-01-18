@@ -24,7 +24,7 @@ const History = () => {
     setHistoryDataLoading(true);
     if (authData) {
       privateAxios
-        .get("/getHistoryData")
+        .get("/api/getHistoryData")
         .then((res) => {
           setHistoryData(res.data);
           if (res.data.length === 0) {
@@ -61,7 +61,7 @@ const History = () => {
   const handleDelete = async (id: string) => {
     if (authData) {
       await privateAxios
-        .post("/deleteHistory", { videoId: id })
+        .post("/api/deleteHistory", { videoId: id })
         .then((res) => {
           if (res.data.success) {
             getHistoryData();
