@@ -36,6 +36,11 @@ const Register = () => {
             toast.error(res.data.message, ToastConfig);
             console.log(res.data.message);
           }
+        })
+        .catch((err) => {
+          if (err.code === "ERR_NETWORK") {
+            toast.error("Server issue", ToastConfig);
+          }
         });
     } else {
       toast.error("Password and confirm password must match", ToastConfig);

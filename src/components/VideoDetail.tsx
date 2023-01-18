@@ -14,6 +14,8 @@ import {
 import axios from "axios";
 import { AuthDataContext } from "../context/Context";
 import { privateAxios } from "../shared/service/axios";
+import { toast } from "react-toastify";
+import ToastConfig from "./ToastConfig";
 
 const VideoDetail = () => {
   const { authData } = useContext(AuthDataContext);
@@ -106,10 +108,24 @@ const VideoDetail = () => {
   const handleHistoryUpload = async () => {
     if (authData) {
       let historyAvailable = false;
-      await privateAxios.get(`/historyAvailable?videoId=${id}`).then((res) => {
-        // console.log(res.data);
-        historyAvailable = res.data.success;
-      });
+      await privateAxios
+        .get(`/historyAvailable?videoId=${id}`)
+        .then((res) => {
+          // console.log(res.data);
+          historyAvailable = res.data.success;
+        })
+        .catch((err) => {
+          historyAvailable = false;
+          if (err.code === "ERR_NETWORK") {
+            toast.error("Server issue", ToastConfig);
+          } else {
+            toast.error(
+              "Token invalid, please logout and login again",
+              ToastConfig
+            );
+          }
+          return;
+        });
       if (historyAvailable) {
         setTimeout(() => {
           privateAxios.post("/updateTime", {
@@ -130,7 +146,12 @@ const VideoDetail = () => {
               thumbnail: videoDetail.thumbnails[3].url,
               time: new Date().getTime(),
             })
-            .catch(() => console.log("something went wrong"));
+            .catch(() => {
+              toast.error(
+                "Token invalid, please logout and login again",
+                ToastConfig
+              );
+            });
         }, 2000);
       }
     }

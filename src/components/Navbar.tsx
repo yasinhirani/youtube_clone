@@ -20,7 +20,7 @@ const Navbar = () => {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    navigate("/search");
+    navigate(`/search?query=${searchValue}`);
     setSearchString(searchValue);
   };
 

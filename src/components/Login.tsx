@@ -22,18 +22,25 @@ const Login = () => {
   };
 
   const handleSubmit = (values: ILoginValues) => {
-    axios.post("http://localhost:8181/api/login", values).then((res) => {
-      if (res.data.success) {
-        toast.success("Login Successful", ToastConfig);
-        localStorage.setItem("access_token", res.data.access_token);
-        localStorage.setItem("userEmail", res.data.authData.email);
-        setAuthData(res.data.authData.email);
-        navigate("/");
-      } else {
-        console.log(res.data.message);
-        toast.error(res.data.message, ToastConfig);
-      }
-    });
+    axios
+      .post("http://localhost:8181/api/login", values)
+      .then((res) => {
+        if (res.data.success) {
+          toast.success("Login Successful", ToastConfig);
+          localStorage.setItem("access_token", res.data.access_token);
+          localStorage.setItem("userEmail", res.data.authData.email);
+          setAuthData(res.data.authData.email);
+          navigate("/");
+        } else {
+          console.log(res.data.message);
+          toast.error(res.data.message, ToastConfig);
+        }
+      })
+      .catch((err) => {
+        if (err.code === "ERR_NETWORK") {
+          toast.error("Server issue", ToastConfig);
+        }
+      });
   };
 
   return (
@@ -106,7 +113,10 @@ const Login = () => {
                 Login
               </button>
               <p className="text-white font-semibold text-base mt-5 text-center">
-                Don't have a account, Don't worry <Link to="/register" className="underline">let's Create one</Link>
+                Don't have a account, Don't worry{" "}
+                <Link to="/register" className="underline">
+                  let's Create one
+                </Link>
               </p>
             </form>
           )}

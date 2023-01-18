@@ -33,11 +33,18 @@ const History = () => {
           setHistoryDataLoading(false);
         })
         .catch((err) => {
-          console.log(err.response.data.message.name);
-          toast.error("Token invalid, please logout and login again", ToastConfig);
+          console.log(err);
+          if (err.code === "ERR_NETWORK") {
+            toast.error("Server issue", ToastConfig);
+          } else {
+            toast.error(
+              "Token invalid, please logout and login again",
+              ToastConfig
+            );
+          }
           setHistoryData([]);
           setHistoryDataLoading(false);
-          setHistoryAvailabilityMessage("No History Available")
+          setHistoryAvailabilityMessage("No History Available");
           // if (err.response.data.message.name === "JsonWebTokenError") {
           //   localStorage.clear();
           //   setAuthData("");
@@ -53,13 +60,25 @@ const History = () => {
 
   const handleDelete = async (id: string) => {
     if (authData) {
-      await privateAxios.post("/deleteHistory", { videoId: id }).then((res) => {
-        if (res.data.success) {
-          getHistoryData();
-        } else {
-          console.log("some error occurred");
-        }
-      });
+      await privateAxios
+        .post("/deleteHistory", { videoId: id })
+        .then((res) => {
+          if (res.data.success) {
+            getHistoryData();
+          } else {
+            console.log("some error occurred");
+          }
+        })
+        .catch((err) => {
+          if (err.code === "ERR_NETWORK") {
+            toast.error("Server issue", ToastConfig);
+          } else {
+            toast.error(
+              "Token invalid, please logout and login again",
+              ToastConfig
+            );
+          }
+        });
     }
   };
 
@@ -137,6 +156,7 @@ const History = () => {
             baseColor="#282828"
             highlightColor="#404040"
             borderRadius="12px"
+            enableAnimation={false}
           >
             {skeletonLoadingLength.map(() => (
               <div

@@ -57,7 +57,7 @@ const ChannelDetail = () => {
           )}
         </div>
       ) : (
-        <SkeletonTheme baseColor="#282828" highlightColor="#404040">
+        <SkeletonTheme baseColor="#282828" highlightColor="#404040" enableAnimation={false}>
           <Skeleton width="100%" height={200} className="z-10" />
         </SkeletonTheme>
       )}
@@ -81,7 +81,7 @@ const ChannelDetail = () => {
             </div>
           </>
         ) : (
-          <SkeletonTheme baseColor="#303030" highlightColor="#404040">
+          <SkeletonTheme baseColor="#303030" highlightColor="#404040" enableAnimation={false}>
             <Skeleton
               width={128}
               height={128}
@@ -126,7 +126,7 @@ const ChannelDetail = () => {
               );
             })
           ) : (
-            <SkeletonTheme baseColor="#282828" highlightColor="#404040">
+            <SkeletonTheme baseColor="#282828" highlightColor="#404040" enableAnimation={false}>
               {skeletonLoadingLength.map(() => {
                 return (
                   <div key={Math.random()}>

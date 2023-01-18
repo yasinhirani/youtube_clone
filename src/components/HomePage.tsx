@@ -113,11 +113,15 @@ const HomePage = () => {
               );
             })
         ) : (
-          <SkeletonTheme baseColor="#282828" highlightColor="#404040">
+          <SkeletonTheme
+            baseColor="#282828"
+            highlightColor="#404040"
+            enableAnimation={false}
+          >
             {skeletonLoadingLength.map(() => {
               return (
                 <div key={Math.random()}>
-                  <Skeleton width="100%" height={150} borderRadius="8px" />
+                  <Skeleton width="100%" height={160} borderRadius="8px" />
                   <h4 className="text-white my-2 text-base font-semibold line-clamp-2">
                     <Skeleton width="100%" />
                   </h4>

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { SearchStringContext } from "../context/Context";
 import "react-loading-skeleton/dist/skeleton.css";
 import formatViews from "../shared/ViewesFormatter";
@@ -9,6 +9,8 @@ import axios from "axios";
 
 const SearchResult = () => {
   const { searchString } = useContext(SearchStringContext);
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get("query");
 
   const [skeletonLoadingLength, setSkeletonLoadingLength] = useState<
     Array<number>
@@ -38,8 +40,8 @@ const SearchResult = () => {
   };
 
   useEffect(() => {
-    getSearchResult(searchString);
-  }, [searchString]);
+    getSearchResult(query);
+  }, [searchString, query]);
 
   return (
     <div className="bg-[#0f0f0f] flex-grow overflow-y-auto px-5 sm:px-10 py-6">
