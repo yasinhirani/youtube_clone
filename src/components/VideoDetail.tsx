@@ -47,7 +47,7 @@ const VideoDetail = () => {
     const options = {
       method: "GET",
       headers: {
-        "X-RapidAPI-Key": "b270c8a6c1mshfa428feb3857501p110f3cjsn471755706752",
+        "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY,
         "X-RapidAPI-Host": "youtube-v31.p.rapidapi.com",
       },
     };
@@ -69,7 +69,7 @@ const VideoDetail = () => {
     const options = {
       method: "GET",
       headers: {
-        "X-RapidAPI-Key": "b270c8a6c1mshfa428feb3857501p110f3cjsn471755706752",
+        "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY,
         "X-RapidAPI-Host": "youtube138.p.rapidapi.com",
       },
     };
@@ -91,7 +91,7 @@ const VideoDetail = () => {
   //   const options = {
   //     method: "GET",
   //     headers: {
-  //       "X-RapidAPI-Key": "b270c8a6c1mshfa428feb3857501p110f3cjsn471755706752",
+  //       "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY,
   //       "X-RapidAPI-Host": "youtube-v31.p.rapidapi.com",
   //     },
   //   };
@@ -166,8 +166,9 @@ const VideoDetail = () => {
   return (
     <section className="flex flex-col lg:flex-row flex-grow bg-[#0f0f0f] px-5 lg:space-x-5 overflow-y-auto space-y-5 lg:space-y-0">
       <div className="flex-grow flex flex-col py-5">
-        <div className="w-full h-full min-h-[400px] sm:min-h-[500px] xl:min-h-[750px]">
+        <div className="player-wrapper">
           <ReactPlayer
+            className="absolute top-0 left-0"
             ref={playerRef}
             url={`https://www.youtube.com/watch?v=${id}`}
             width="100%"

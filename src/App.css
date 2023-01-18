@@ -1,11 +1,11 @@
-.history__card-title{
-    word-break: break-word;
+.history__card-title {
+  word-break: break-word;
 }
-.home__thumbnail{
-    aspect-ratio: 84/47;
+.home__thumbnail {
+  aspect-ratio: 84/47;
 }
 
-.break-word{
+.break-word {
   word-break: break-word;
 }
 
@@ -31,4 +31,14 @@ progress[value]::-webkit-progress-bar {
 }
 progress[value]::-webkit-progress-value {
   @apply bg-red-600;
+}
+
+.player-wrapper {
+  position: relative;
+  padding-top: 56.25%;
+}
+@media screen and (min-width: 1380px) {
+  .player-wrapper {
+    padding-top: 50%;
+  }
 }

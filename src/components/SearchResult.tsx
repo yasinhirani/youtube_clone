@@ -24,7 +24,7 @@ const SearchResult = () => {
     const options = {
       method: "GET",
       headers: {
-        "X-RapidAPI-Key": "b270c8a6c1mshfa428feb3857501p110f3cjsn471755706752",
+        "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY,
         "X-RapidAPI-Host": "youtube-v3-alternative.p.rapidapi.com",
       },
     };

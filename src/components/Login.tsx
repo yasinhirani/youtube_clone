@@ -46,11 +46,10 @@ const Login = () => {
   return (
     <div className="flex-grow p-5 bg-[#0f0f0f] overflow-y-auto flex justify-center">
       <div className="w-96">
-        <div className="flex justify-center items-center space-x-3 h-56">
-          <figure className="w-14">
-            <img src="/images/youtube_Logo.png" alt="" />
+        <div className="flex justify-center items-center h-56">
+          <figure className="w-60">
+            <img src="/images/youtube_logo_desktop.png" alt="" />
           </figure>
-          <p className="text-white text-3xl">Youtube Clone</p>
         </div>
         <Formik
           initialValues={initialValues}
@@ -107,14 +106,14 @@ const Login = () => {
                 </div>
               </div>
               <button
-                className="w-full bg-red-600 text-white p-3 rounded-md mt-10"
+                className="w-full bg-primary text-white p-3 rounded-md mt-10"
                 type="submit"
               >
                 Login
               </button>
-              <p className="text-white font-semibold text-base mt-5 text-center">
+              <p className="text-white font-normal text-base mt-5 text-center">
                 Don't have a account, Don't worry{" "}
-                <Link to="/register" className="underline">
+                <Link to="/register" className="underline font-semibold">
                   let's Create one
                 </Link>
               </p>

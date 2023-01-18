@@ -33,10 +33,17 @@ const Navbar = () => {
             setActiveLink("Home");
           }}
         >
-          <figure className="w-14">
+          <figure className="w-28 hidden sm:block">
             <img
               className="w-full h-auto"
-              src="/images/youtube_logo.png"
+              src="/images/youtube_logo_desktop.png"
+              alt="Youtube"
+            />
+          </figure>
+          <figure className="w-12 block sm:hidden">
+            <img
+              className="w-full h-auto"
+              src="/images/youtube_logo_mobile.png"
               alt="Youtube"
             />
           </figure>
