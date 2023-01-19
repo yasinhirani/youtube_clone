@@ -53,9 +53,9 @@ const Login = () => {
   };
 
   return (
-    <div className="flex-grow p-5 bg-[#0f0f0f] overflow-y-auto flex justify-center">
-      <div className="w-96">
-        <div className="flex justify-center items-center h-56">
+    <div className="flex-grow p-5 bg-[#0f0f0f] overflow-y-auto flex flex-col items-center">
+      <div className="w-full sm:w-96 flex-grow">
+        <div className="flex justify-center items-center h-56 min-h-[14rem]">
           <figure className="w-60">
             <img src="/images/youtube_logo_desktop.png" alt="" />
           </figure>
@@ -132,7 +132,10 @@ const Login = () => {
                 </button>
                 <p className="text-white font-normal text-base mt-5 text-center">
                   Don't have a account, Don't worry{" "}
-                  <Link to="/register" className="underline font-semibold">
+                  <Link
+                    to="/register"
+                    className="underline font-semibold whitespace-nowrap"
+                  >
                     let's Create one
                   </Link>
                 </p>

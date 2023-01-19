@@ -17,16 +17,19 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const [searchValue, setSearchValue] = useState("");
+  const [searchBarVisible, setSearchBarVisible] = useState<boolean>(false);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
     navigate(`/search?query=${searchValue}`);
     setSearchString(searchValue);
+    setSearchBarVisible(false);
   };
 
   return (
     <nav className="flex items-center h-20 bg-[#0f0f0f] fixed top-0 z-10 w-full">
       <div className="w-full flex justify-between items-center space-x-5 px-6 py-2">
+        {/* Logo */}
         <Link
           to="/"
           onClick={() => {
@@ -48,7 +51,9 @@ const Navbar = () => {
             />
           </figure>
         </Link>
-        <form className="w-72 flex items-center rounded-3xl bg-gray-200 overflow-hidden">
+        {/* Logo */}
+        {/* Search Bar */}
+        <form className="w-72 hidden sm:flex items-center rounded-3xl bg-gray-200 overflow-hidden">
           <input
             className="w-full px-4 py-2 focus:outline-none"
             type="search"
@@ -79,7 +84,29 @@ const Navbar = () => {
             </svg>
           </button>
         </form>
-        <div>
+        {/* Search Bar */}
+        {/* Login and profile section */}
+        <div className="flex items-center">
+          <button
+            type="button"
+            className="mr-6 block sm:hidden"
+            onClick={() => setSearchBarVisible(true)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="w-6 text-white"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+              />
+            </svg>
+          </button>
           {authData !== "" && (
             <Menu as="div" className="relative inline-block text-left">
               <div>
@@ -160,7 +187,63 @@ const Navbar = () => {
             </button>
           )}
         </div>
+        {/* Login and profile section */}
       </div>
+      {/* Search for mobile */}
+      <div
+        className={`h-20 bg-[#0f0f0f] left-0 right-0 flex sm:hidden justify-center items-center space-x-5 absolute z-30 px-5 transform transition-all ${
+          searchBarVisible ? "translate-y-0" : "-translate-y-20"
+        }`}
+      >
+        <form className="w-full flex items-center rounded-3xl bg-gray-200 overflow-hidden">
+          <input
+            className="w-full px-4 py-2 focus:outline-none"
+            type="search"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            name=""
+            id=""
+            placeholder="Search"
+          />
+          <button
+            type="submit"
+            onClick={handleSubmit}
+            className="px-4 bg-transparent"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="w-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+              />
+            </svg>
+          </button>
+        </form>
+        <button type="button" onClick={() => setSearchBarVisible(false)}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="w-6 text-white"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+      {/* Search for mobile */}
     </nav>
   );
 };

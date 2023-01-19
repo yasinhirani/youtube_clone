@@ -74,7 +74,10 @@ function App() {
                   !location.pathname.includes("register") && <Navbar />}
                 <div
                   className={`w-full flex ${
-                    location.pathname.includes("watch") && "flex-col"
+                    (location.pathname.includes("watch") ||
+                      location.pathname.includes("login") ||
+                      location.pathname.includes("register")) &&
+                    "flex-col"
                   } flex-grow overflow-hidden ${
                     !location.pathname.includes("login") &&
                     !location.pathname.includes("register") &&
