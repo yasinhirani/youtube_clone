@@ -42,3 +42,25 @@ progress[value]::-webkit-progress-value {
     padding-top: 50%;
   }
 }
+/* loader */
+.loader__dot{
+  animation: loading 1s ease-in-out infinite;
+}
+.loader__dot-1{
+  animation-delay: .1s;
+}
+.loader__dot-2{
+  animation-delay: .3s;
+}
+.loader__dot-3{
+  animation-delay: .5s;
+}
+
+@keyframes loading {
+  0%, 100%{
+    transform: translateY(0);
+  }
+  50%{
+    transform: translateY(-10px);
+  }
+}

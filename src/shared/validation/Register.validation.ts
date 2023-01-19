@@ -5,9 +5,14 @@ const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 const RegisterValidation = Yup.object({
   email: Yup.string()
     .required("Email address is required")
-    .matches(emailRegex, "Email address not valid"),
-  password: Yup.string().required("Password is required"),
-  confirmPassword: Yup.string().required("ConfirmPassword is required"),
+    .matches(emailRegex, "Email address not valid")
+    .trim(),
+  password: Yup.string()
+    .required("Password is required")
+    .matches(/^\S*$/, "Password should not contain space"),
+  confirmPassword: Yup.string()
+    .required("Confirm Password is required")
+    .matches(/^\S*$/, "Confirm Password should not contain space"),
 });
 
 export default RegisterValidation;

@@ -33,7 +33,7 @@ const History = () => {
           setHistoryDataLoading(false);
         })
         .catch((err) => {
-          console.log(err);
+          // console.log(err);
           if (err.code === "ERR_NETWORK") {
             toast.error("Server issue", ToastConfig);
           } else {
@@ -67,7 +67,7 @@ const History = () => {
             getHistoryData();
           } else {
             toast.error(res.data.message, ToastConfig);
-            console.log("some error occurred");
+            // console.log("some error occurred");
           }
         })
         .catch((err) => {

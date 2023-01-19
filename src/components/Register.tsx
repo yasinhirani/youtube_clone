@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Formik } from "formik";
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import RegisterValidation from "../shared/validation/Register.validation";
@@ -21,30 +21,36 @@ const Register = () => {
     confirmPassword: "",
   };
 
+  const [apiLoading, setApiLoading] = useState<boolean>(false);
+
   const handleSubmit = (values: IRegisterValues) => {
+    setApiLoading(true);
     if (values.password === values.confirmPassword) {
       axios
-        .post("http://localhost:8080/api/register", {
-          email: values.email,
+        .post("https://yasin-youtube-clone.onrender.com/api/register", {
+          email: values.email.toLowerCase(),
           password: values.password,
         })
         .then((res) => {
           if (res.data.success) {
+            setApiLoading(false);
             toast.success(res.data.message, ToastConfig);
             navigate("/login");
           } else {
+            setApiLoading(false);
             toast.error(res.data.message, ToastConfig);
-            console.log(res.data.message);
+            // console.log(res.data.message);
           }
         })
         .catch((err) => {
+          setApiLoading(false);
           if (err.code === "ERR_NETWORK") {
             toast.error("Server issue", ToastConfig);
           }
         });
     } else {
       toast.error("Password and confirm password must match", ToastConfig);
-      console.log("Password and confirm password must match");
+      // console.log("Password and confirm password must match");
     }
   };
 
@@ -132,10 +138,19 @@ const Register = () => {
                 </div>
               </div>
               <button
-                className="w-full bg-primary text-white p-3 rounded-md mt-10"
+                className="w-full bg-primary text-white p-3 h-12 rounded-md mt-10 flex justify-center items-center"
                 type="submit"
               >
-                Register
+                {apiLoading && (
+                  <div className="flex justify-center items-center space-x-2">
+                    <div className="loader__dot loader__dot-1 w-2 h-2 rounded-full bg-white" />
+                    <div className="loader__dot loader__dot-2 w-2 h-2 rounded-full bg-white" />
+                    <div className="loader__dot loader__dot-3 w-2 h-2 rounded-full bg-white" />
+                  </div>
+                )}
+                {!apiLoading && (
+                  <span className="font-medium text-base">Register</span>
+                )}
               </button>
               <p className="text-white font-normal text-base mt-5 text-center">
                 Already have a account,{" "}

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Formik } from "formik";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthDataContext } from "../context/Context";
 import LoginValidation from "../shared/validation/Login.validation";
@@ -21,22 +21,31 @@ const Login = () => {
     password: "",
   };
 
+  const [apiLoading, setApiLoading] = useState<boolean>(false);
+
   const handleSubmit = (values: ILoginValues) => {
+    setApiLoading(true);
     axios
-      .post("http://localhost:8080/api/login", values)
+      .post("https://yasin-youtube-clone.onrender.com/api/login", {
+        email: values.email.toLowerCase(),
+        password: values.password,
+      })
       .then((res) => {
         if (res.data.success) {
+          setApiLoading(false);
           toast.success("Login Successful", ToastConfig);
           localStorage.setItem("access_token", res.data.access_token);
           localStorage.setItem("userEmail", res.data.authData.email);
           setAuthData(res.data.authData.email);
           navigate("/");
         } else {
-          console.log(res.data.message);
+          setApiLoading(false);
+          // console.log(res.data.message);
           toast.error(res.data.message, ToastConfig);
         }
       })
       .catch((err) => {
+        setApiLoading(false);
         if (err.code === "ERR_NETWORK") {
           toast.error("Server issue", ToastConfig);
         }
@@ -106,10 +115,19 @@ const Login = () => {
                 </div>
               </div>
               <button
-                className="w-full bg-primary text-white p-3 rounded-md mt-10"
+                className="w-full bg-primary text-white p-3 h-12 rounded-md mt-10 flex justify-center items-center"
                 type="submit"
               >
-                Login
+                {apiLoading && (
+                  <div className="flex justify-center items-center space-x-2">
+                    <div className="loader__dot loader__dot-1 w-2 h-2 rounded-full bg-white" />
+                    <div className="loader__dot loader__dot-2 w-2 h-2 rounded-full bg-white" />
+                    <div className="loader__dot loader__dot-3 w-2 h-2 rounded-full bg-white" />
+                  </div>
+                )}
+                {!apiLoading && (
+                  <span className="font-medium text-base">Login</span>
+                )}
               </button>
               <p className="text-white font-normal text-base mt-5 text-center">
                 Don't have a account, Don't worry{" "}
