@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Formik } from "formik";
+import { Field, Form, Formik } from "formik";
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthDataContext } from "../context/Context";
@@ -65,78 +65,80 @@ const Login = () => {
           validationSchema={LoginValidation}
           onSubmit={(values) => handleSubmit(values)}
         >
-          {({ submitForm, values, setFieldValue, errors }) => (
-            <form
-              className="mt-5"
-              onSubmit={(e) => {
-                e.preventDefault();
-                submitForm();
-              }}
-            >
-              <div className="flex flex-col space-y-6">
-                <div className="w-full flex flex-col space-y-2 relative">
-                  <label
-                    className="text-white text-base font-semibold"
-                    htmlFor="email"
-                  >
-                    Email address:
-                  </label>
-                  <input
-                    className="w-full bg-transparent border border-gray-500 rounded-md px-2 py-2 focus:outline-none text-white"
-                    type="email"
-                    name="email"
-                    id="email"
-                    onChange={(e) => setFieldValue("email", e.target.value)}
-                    value={values.email}
-                    autoComplete="off"
-                  />
-                  <p className="font-bold text-xs text-red-500 absolute -bottom-5">
-                    {errors.email}
-                  </p>
-                </div>
-                <div className="w-full flex flex-col space-y-2 relative">
-                  <label
-                    className="text-white text-base font-semibold"
-                    htmlFor="password"
-                  >
-                    Password:
-                  </label>
-                  <input
-                    className="w-full bg-transparent border border-gray-500 rounded-md px-2 py-2 focus:outline-none text-white"
-                    type="password"
-                    name="password"
-                    id="password"
-                    onChange={(e) => setFieldValue("password", e.target.value)}
-                    value={values.password}
-                  />
-                  <p className="font-bold text-xs text-red-500 absolute -bottom-5">
-                    {errors.password}
-                  </p>
-                </div>
-              </div>
-              <button
-                className="w-full bg-primary text-white p-3 h-12 rounded-md mt-10 flex justify-center items-center"
-                type="submit"
-              >
-                {apiLoading && (
-                  <div className="flex justify-center items-center space-x-2">
-                    <div className="loader__dot loader__dot-1 w-2 h-2 rounded-full bg-white" />
-                    <div className="loader__dot loader__dot-2 w-2 h-2 rounded-full bg-white" />
-                    <div className="loader__dot loader__dot-3 w-2 h-2 rounded-full bg-white" />
+          {(props) => {
+            const { values, errors, touched } = props;
+            return (
+              <Form className="mt-5">
+                <div className="flex flex-col space-y-6">
+                  <div className="w-full flex flex-col space-y-2 relative">
+                    <label
+                      className="text-white text-base font-semibold"
+                      htmlFor="email"
+                    >
+                      Email address:
+                    </label>
+                    <Field
+                      className="w-full bg-transparent border border-gray-500 rounded-md px-2 py-2 focus:outline-none text-white"
+                      name="email"
+                      id="email"
+                      onChange={props.handleChange}
+                      onBlur={props.handleBlur}
+                      value={values.email}
+                      autoComplete="off"
+                    />
+                    {errors.email && touched.email ? (
+                      <p className="font-bold text-xs text-red-500 absolute -bottom-5">
+                        {errors.email}
+                      </p>
+                    ) : null}
                   </div>
-                )}
-                {!apiLoading && (
-                  <span className="font-medium text-base">Login</span>
-                )}
-              </button>
-              <p className="text-white font-normal text-base mt-5 text-center">
-                Don't have a account, Don't worry{" "}
-                <Link to="/register" className="underline font-semibold">
-                  let's Create one
-                </Link>
-              </p>
-            </form>
-          )}
+                  <div className="w-full flex flex-col space-y-2 relative">
+                    <label
+                      className="text-white text-base font-semibold"
+                      htmlFor="password"
+                    >
+                      Password:
+                    </label>
+                    <Field
+                      className="w-full bg-transparent border border-gray-500 rounded-md px-2 py-2 focus:outline-none text-white"
+                      type="password"
+                      name="password"
+                      id="password"
+                      onChange={props.handleChange}
+                      onBlur={props.handleBlur}
+                      value={values.password}
+                    />
+                    {errors.password && touched.password ? (
+                      <p className="font-bold text-xs text-red-500 absolute -bottom-5">
+                        {errors.password}
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+                <button
+                  className="w-full bg-primary text-white p-3 h-12 rounded-md mt-10 flex justify-center items-center"
+                  type="submit"
+                >
+                  {apiLoading && (
+                    <div className="flex justify-center items-center space-x-2">
+                      <div className="loader__dot loader__dot-1 w-2 h-2 rounded-full bg-white" />
+                      <div className="loader__dot loader__dot-2 w-2 h-2 rounded-full bg-white" />
+                      <div className="loader__dot loader__dot-3 w-2 h-2 rounded-full bg-white" />
+                    </div>
+                  )}
+                  {!apiLoading && (
+                    <span className="font-medium text-base">Login</span>
+                  )}
+                </button>
+                <p className="text-white font-normal text-base mt-5 text-center">
+                  Don't have a account, Don't worry{" "}
+                  <Link to="/register" className="underline font-semibold">
+                    let's Create one
+                  </Link>
+                </p>
+              </Form>
+            );
+          }}
         </Formik>
       </div>
     </div>

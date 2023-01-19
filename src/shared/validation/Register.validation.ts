@@ -12,7 +12,7 @@ const RegisterValidation = Yup.object({
     .matches(/^\S*$/, "Password should not contain space"),
   confirmPassword: Yup.string()
     .required("Confirm Password is required")
-    .matches(/^\S*$/, "Confirm Password should not contain space"),
+    .oneOf([Yup.ref("password"), null], "Password and Confirm Password Did not match"),
 });
 
 export default RegisterValidation;
