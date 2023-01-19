@@ -131,31 +131,35 @@ const VideoDetail = () => {
             time: new Date().getTime(),
           });
         }, 2000);
-        return;
+      } else {
+        uploadHistory();
       }
-      if (videoDetail) {
-        setTimeout(() => {
-          privateAxios
-            .post("/api/history", {
-              channelName: videoDetail.author.title,
-              title: videoDetail.title,
-              videoId: videoDetail.videoId,
-              description: videoDetail.description,
-              thumbnail: videoDetail.thumbnails[3].url,
-              time: new Date().getTime(),
-            })
-            .catch((err) => {
-              if (err.code === "ERR_NETWORK") {
-                toast.error("Server issue", ToastConfig);
-              } else {
-                toast.error(
-                  "Token invalid, please logout and login again",
-                  ToastConfig
-                );
-              }
-            });
-        }, 2000);
-      }
+    }
+  };
+
+  const uploadHistory = () => {
+    if (videoDetail) {
+      setTimeout(() => {
+        privateAxios
+          .post("/api/history", {
+            channelName: videoDetail.author.title,
+            title: videoDetail.title,
+            videoId: videoDetail.videoId,
+            description: videoDetail.description,
+            thumbnail: videoDetail.thumbnails[3].url,
+            time: new Date().getTime(),
+          })
+          .catch((err) => {
+            if (err.code === "ERR_NETWORK") {
+              toast.error("Server issue", ToastConfig);
+            } else {
+              toast.error(
+                "Token invalid, please logout and login again",
+                ToastConfig
+              );
+            }
+          });
+      }, 2000);
     }
   };
 
@@ -176,7 +180,7 @@ const VideoDetail = () => {
             width="100%"
             height="100%"
             controls
-            playing
+            playing={videoDetail !== null}
             onStart={handleHistoryUpload}
             pip={true}
           />

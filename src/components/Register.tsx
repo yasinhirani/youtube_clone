@@ -26,7 +26,7 @@ const Register = () => {
   const handleSubmit = (values: IRegisterValues) => {
     setApiLoading(true);
     axios
-      .post("https://yasin-youtube-clone.onrender.com/api/register", {
+      .post("https://yasin-youtube-clone.vercel.app/api/register", {
         email: values.email.toLowerCase(),
         password: values.password,
       })

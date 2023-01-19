@@ -26,7 +26,7 @@ const Login = () => {
   const handleSubmit = (values: ILoginValues) => {
     setApiLoading(true);
     axios
-      .post("https://yasin-youtube-clone.onrender.com/api/login", {
+      .post("https://yasin-youtube-clone.vercel.app/api/login", {
         email: values.email.toLowerCase(),
         password: values.password,
       })

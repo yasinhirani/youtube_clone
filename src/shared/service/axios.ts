@@ -1,7 +1,7 @@
 import axios from "axios"
 
 export const privateAxios = axios.create({
-  baseURL: "https://yasin-youtube-clone.onrender.com/",
+  baseURL: "https://yasin-youtube-clone.vercel.app/",
 });
 
 privateAxios.interceptors.request.use(
