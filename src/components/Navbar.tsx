@@ -112,7 +112,7 @@ const Navbar = () => {
               <div>
                 <Menu.Button className="flex w-full justify-center items-center rounded-md text-lg font-medium text-white focus:outline-none">
                   <div className="flex items-center space-x-2">
-                    <span className="capitalize">
+                    <span className="capitalize inline-block w-full max-w-[12ch] overflow-hidden overflow-ellipsis whitespace-nowrap">
                       {localStorage.userEmail.split("@")[0]}
                     </span>
                     <svg
