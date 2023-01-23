@@ -164,6 +164,8 @@ const VideoDetail = () => {
   };
 
   useEffect(() => {
+    setVideoDetail(null);
+    setChapterVisible(false);
     getVideoRecommendations();
     getVideoDetails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -322,10 +324,7 @@ const VideoDetail = () => {
                       key={Math.random()}
                       className="flex items-start space-x-4"
                     >
-                      <Link
-                        to={`/watch?v=${recommendation.id.videoId}`}
-                        onClick={() => setChapterVisible(false)}
-                      >
+                      <Link to={`/watch?v=${recommendation.id.videoId}`}>
                         <figure className="w-44 min-w-[11rem] relative">
                           <img
                             className="min-w-full h-full rounded-xl"
