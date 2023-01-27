@@ -112,7 +112,11 @@ const SearchResult = () => {
                   </Link>
                 );
               }
-              if (result.type === "video") {
+              if (
+                result.type === "video" &&
+                result?.thumbnail?.length > 0 &&
+                result?.channelThumbnail?.length > 0
+              ) {
                 return (
                   <div
                     className="flex flex-col sm:flex-row sm:items-start sm:space-x-5 space-y-4 sm:space-y-0"
