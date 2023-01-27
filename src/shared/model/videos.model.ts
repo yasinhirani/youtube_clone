@@ -65,7 +65,7 @@ export interface Video {
   lengthText: string;
 }
 
-export interface ISearchResult {
+export interface IVideos {
   type: string;
   channelId: string;
   title: string;
@@ -82,6 +82,12 @@ export interface ISearchResult {
   channelThumbnail: ChannelThumbnail[];
   playlistId: string;
   videos: Video[];
+}
+
+export interface ISearchResult{
+  continuation: string;
+  estimatedResults: string;
+  data: IVideos[];
 }
 
 // For search recommendations
