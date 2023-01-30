@@ -67,7 +67,10 @@ const ChannelDetail = () => {
       )}
       <div
         className={`flex flex-col items-center transform z-10 relative ${
-          channelDetails?.meta.image.banner !== null && "sm:-translate-y-14"
+          channelDetails &&
+          channelDetails?.meta.image.banner !== null &&
+          channelDetails?.meta.image.banner.length > 5 &&
+          "sm:-translate-y-14"
         } my-10 sm:my-0`}
       >
         {channelDetails ? (
