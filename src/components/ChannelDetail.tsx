@@ -105,10 +105,9 @@ const ChannelDetail = () => {
         <h4 className="font-semibold text-2xl mb-5">Videos</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {channelDetails && channelDetails.data.length > 0 ? (
-            // eslint-disable-next-line array-callback-return
             channelDetails.data.map((data) => {
-              if (data.thumbnail.length > 3) {
-                return (
+              return (
+                data.thumbnail.length > 3 && (
                   <Link key={Math.random()} to={`/watch?v=${data.videoId}`}>
                     <figure className="w-full relative">
                       <img
@@ -133,8 +132,8 @@ const ChannelDetail = () => {
                       {formatViews(+data.viewCount)} • {data.publishedText}
                     </p>
                   </Link>
-                );
-              }
+                )
+              );
             })
           ) : (
             <SkeletonTheme
