@@ -83,7 +83,13 @@ const SearchResult = () => {
           searchResult ? dataLength < +searchResult.estimatedResults : false
         }
         next={fetchMore}
-        loader={<p className="text-white mt-2">Loading...</p>}
+        loader={
+          <div className="flex justify-center items-center space-x-2 mt-5">
+            <div className="loader__dot loader__dot-1 w-2 h-2 rounded-full bg-white" />
+            <div className="loader__dot loader__dot-2 w-2 h-2 rounded-full bg-white" />
+            <div className="loader__dot loader__dot-3 w-2 h-2 rounded-full bg-white" />
+          </div>
+        }
         scrollableTarget="scrollableDiv"
       >
         <div className="grid grid-cols-1 gap-8 w-full max-w-[90rem] mx-auto">

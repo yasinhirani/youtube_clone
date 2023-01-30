@@ -16,6 +16,7 @@ import { AuthDataContext } from "../context/Context";
 import { privateAxios } from "../shared/service/axios";
 import { toast } from "react-toastify";
 import ToastConfig from "./ToastConfig";
+import TimeFormatter from "../shared/TimeFormatter";
 
 const VideoDetail = () => {
   const { authData } = useContext(AuthDataContext);
@@ -306,10 +307,13 @@ const VideoDetail = () => {
                           }
                         }}
                       >
-                        <figure className="w-14">
+                        <figure className="w-24 rounded-lg overflow-hidden">
                           <img src={chapter.thumbnails[0].url} alt="" />
                         </figure>
-                        <span>{chapter.title}</span>
+                        <div>
+                          <p className="text-sm font-medium mb-1">{chapter.title}</p>
+                          <span className="text-[#3ea6ff] bg-[#263850] px-2 py-1 text-xs rounded-sm">{TimeFormatter(chapter.startingMs)}</span>
+                        </div>
                       </button>
                     );
                   })}

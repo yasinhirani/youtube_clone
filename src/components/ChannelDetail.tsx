@@ -57,7 +57,11 @@ const ChannelDetail = () => {
           )}
         </div>
       ) : (
-        <SkeletonTheme baseColor="#282828" highlightColor="#404040" enableAnimation={false}>
+        <SkeletonTheme
+          baseColor="#282828"
+          highlightColor="#404040"
+          enableAnimation={false}
+        >
           <Skeleton width="100%" height={200} className="z-10" />
         </SkeletonTheme>
       )}
@@ -81,7 +85,11 @@ const ChannelDetail = () => {
             </div>
           </>
         ) : (
-          <SkeletonTheme baseColor="#303030" highlightColor="#404040" enableAnimation={false}>
+          <SkeletonTheme
+            baseColor="#303030"
+            highlightColor="#404040"
+            enableAnimation={false}
+          >
             <Skeleton
               width={128}
               height={128}
@@ -97,36 +105,43 @@ const ChannelDetail = () => {
         <h4 className="font-semibold text-2xl mb-5">Videos</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {channelDetails && channelDetails.data.length > 0 ? (
+            // eslint-disable-next-line array-callback-return
             channelDetails.data.map((data) => {
-              return (
-                <Link key={Math.random()} to={`/watch?v=${data.videoId}`}>
-                  <figure className="w-full relative">
-                    <img
-                      src={data.thumbnail[3].url}
-                      alt=""
-                      className="w-full h-auto home__thumbnail rounded-xl"
-                    />
-                    {data.lengthText !== "" && (
-                      <figcaption className="bg-black bg-opacity-80 rounded-lg px-2 py-1 absolute right-2 bottom-2 text-xs text-white font-semibold">
-                        {data.lengthText}
-                      </figcaption>
-                    )}
-                  </figure>
-                  <h4 className="text-white my-2 text-base font-medium line-clamp-2">
-                    {data.title}
-                  </h4>
-                  <p className="text-gray-400 font-medium text-sm">
-                    {channelDetails?.meta.title}
-                  </p>
+              if (data.thumbnail.length > 3) {
+                return (
+                  <Link key={Math.random()} to={`/watch?v=${data.videoId}`}>
+                    <figure className="w-full relative">
+                      <img
+                        src={data.thumbnail[3].url}
+                        alt=""
+                        className="w-full h-auto home__thumbnail rounded-xl"
+                      />
+                      {data.lengthText !== "" && (
+                        <figcaption className="bg-black bg-opacity-80 rounded-lg px-2 py-1 absolute right-2 bottom-2 text-xs text-white font-semibold">
+                          {data.lengthText}
+                        </figcaption>
+                      )}
+                    </figure>
+                    <h4 className="text-white my-2 text-base font-medium line-clamp-2">
+                      {data.title}
+                    </h4>
+                    <p className="text-gray-400 font-medium text-sm">
+                      {channelDetails?.meta.title}
+                    </p>
 
-                  <p className="text-gray-400 font-medium text-xs mt-1">
-                    {formatViews(+data.viewCount)} • {data.publishedText}
-                  </p>
-                </Link>
-              );
+                    <p className="text-gray-400 font-medium text-xs mt-1">
+                      {formatViews(+data.viewCount)} • {data.publishedText}
+                    </p>
+                  </Link>
+                );
+              }
             })
           ) : (
-            <SkeletonTheme baseColor="#282828" highlightColor="#404040" enableAnimation={false}>
+            <SkeletonTheme
+              baseColor="#282828"
+              highlightColor="#404040"
+              enableAnimation={false}
+            >
               {skeletonLoadingLength.map(() => {
                 return (
                   <div key={Math.random()}>
