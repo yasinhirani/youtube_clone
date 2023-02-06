@@ -1,4 +1,4 @@
-import { Fragment, useContext, useState } from "react";
+import { Fragment, useContext, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ActiveLinkContext,
@@ -8,6 +8,11 @@ import {
 import { Menu, Transition } from "@headlessui/react";
 import { toast } from "react-toastify";
 import ToastConfig from "./ToastConfig";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
+import { debounce } from "lodash";
+import axios from "axios";
 
 const Navbar = () => {
   const { setActiveLink } = useContext(ActiveLinkContext);
@@ -16,15 +21,76 @@ const Navbar = () => {
 
   const navigate = useNavigate();
 
+  const {
+    interimTranscript,
+    finalTranscript,
+    browserSupportsSpeechRecognition,
+  } = useSpeechRecognition();
+
   const [searchValue, setSearchValue] = useState("");
   const [searchBarVisible, setSearchBarVisible] = useState<boolean>(false);
+  const [autocompleteData, setAutocompleteData] = useState([]);
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: any, value?: string) => {
     e.preventDefault();
-    navigate(`/search?query=${searchValue}`);
-    setSearchString(searchValue);
+    setAutocompleteData([]);
+    navigate(`/search?query=${value ? value : searchValue}`);
+    setSearchString(value ? value : searchValue);
     setSearchBarVisible(false);
   };
+
+  const getAutoCompleteValue = useMemo(
+    () =>
+      debounce((value) => {
+        const trimString = value.trim();
+        if (trimString.length > 2) {
+          getAutoCompleteData(trimString);
+        } else {
+          setAutocompleteData([]);
+        }
+      }, 750),
+    []
+  );
+
+  const getAutoCompleteData = (data: string) => {
+    const options = {
+      method: "GET",
+      headers: {
+        "X-RapidAPI-Key": "b270c8a6c1mshfa428feb3857501p110f3cjsn471755706752",
+        "X-RapidAPI-Host": "youtube138.p.rapidapi.com",
+      },
+    };
+    axios
+      .get(
+        `https://youtube138.p.rapidapi.com/auto-complete/?q=${data}&hl=en&gl=IN`,
+        options
+      )
+      .then((res) => {
+        setAutocompleteData(res.data.results);
+      });
+  };
+
+  const startListening = async () => {
+    if (browserSupportsSpeechRecognition) {
+      await SpeechRecognition.startListening({
+        language: "en-IN",
+        continuous: false,
+      });
+    } else {
+      console.log("Browser does not support speech recognition");
+    }
+  };
+
+  useEffect(() => {
+    if (finalTranscript !== "") {
+      setSearchValue(finalTranscript);
+      // console.log(finalTranscript);
+      navigate(`/search?query=${finalTranscript}`);
+      setSearchString(searchValue);
+      setSearchBarVisible(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [interimTranscript, finalTranscript]);
 
   return (
     <nav className="flex items-center h-20 bg-[#0f0f0f] fixed top-0 z-10 w-full">
@@ -53,12 +119,15 @@ const Navbar = () => {
         </Link>
         {/* Logo */}
         {/* Search Bar */}
-        <form className="w-72 hidden sm:flex items-center rounded-3xl bg-gray-200 overflow-hidden">
+        <form className="w-72 hidden sm:flex items-center rounded-3xl bg-gray-200 relative">
           <input
-            className="w-full px-4 py-2 focus:outline-none"
+            className="w-full px-4 py-2 focus:outline-none rounded-l-3xl"
             type="search"
             value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
+            onChange={(e) => {
+              getAutoCompleteValue(e.target.value);
+              setSearchValue(e.target.value);
+            }}
             name=""
             id=""
             placeholder="Search"
@@ -83,6 +152,27 @@ const Navbar = () => {
               />
             </svg>
           </button>
+          <button type="button" onClick={startListening}>
+            speak
+          </button>
+          {autocompleteData.length !== 0 && (
+            <div className="absolute w-80 top-12 left-0 h-60 bg-white z-20 px-3 py-1 flex flex-col rounded-xl overflow-auto">
+              {autocompleteData.map((data) => {
+                return (
+                  <button
+                    onClick={(e) => {
+                      setSearchValue(data);
+                      handleSubmit(e, data);
+                    }}
+                    key={Math.random()}
+                    className="text-left py-1"
+                  >
+                    {data}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </form>
         {/* Search Bar */}
         {/* Login and profile section */}
