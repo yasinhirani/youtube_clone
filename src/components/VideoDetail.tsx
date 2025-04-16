@@ -188,7 +188,7 @@ const VideoDetail = () => {
             pip={true}
           />
         </div>
-        {videoDetail && videoDetail.chapters.length > 0 && !chapterVisible && (
+        {videoDetail && videoDetail.chapters && videoDetail.chapters.length > 0 && !chapterVisible && (
           <div>
             <button
               className="text-white mt-4"
